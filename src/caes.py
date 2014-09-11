@@ -4,11 +4,11 @@ Implementation of the Carneades model of argumentation.
 Construct some proposition literals.
 
 >>> a = PropLiteral('a')
->>> b = PropLiteral('b', False)
+>>> negb = PropLiteral('b', False)
 
 >>> print(a)
 a
->>> print(b)
+>>> print(negb)
 -b
 
 Get the negation of `c`.
@@ -21,8 +21,8 @@ Get the negation of `c`.
 >>> a == a.negate()
 False
 >>> a == a.negate().negate()
-
->>> d = b.negate()
+True
+>>> d = negb.negate()
 >>> print(d)
 b
 
@@ -41,34 +41,34 @@ True
 
 Construct some arguments.
 
->>> arg1 = Argument(a, premises={b}, weight=0.3)
->>> arg2 = Argument(b, premises={e}, weight=0.6)
->>> arg3 = Argument(b, premises={g})
+>>> arg1 = Argument(a, premises={negb}, weight=0.3)
+>>> arg2 = Argument(negb, premises={e}, weight=0.6)
+>>> arg3 = Argument(negb, premises={g})
 
 >>> h = PropLiteral('h')
 >>> i = PropLiteral('i', False)
->>> arg4 = Argument(a, premises={h, i}, exceptions={b})
+>>> arg4 = Argument(a, premises={h, i}, exceptions={negb})
 
 >>> args = [arg1, arg2, arg3, arg4]
 >>> for arg in args:
 ...     print(arg)
-[b], ~[] => a, 0.3
-[e], ~[] => b, 0.6
-[e], ~[] => b, 1.0
-[-i, h], ~[b] => a, 1.0
+[-b], ~[] => a, 0.3
+[e], ~[] => -b, 0.6
+[e], ~[] => -b, 1.0
+[-i, h], ~[-b] => a, 1.0
 
 Argument set
 
 >>> argset = ArgumentSet()
->>> argset.add_proposition(a)
+>>> v0 = argset.add_proposition(a)
 Added proposition 'a' to graph
 >>> argset.propset()
 {a}
->>> argset.add_proposition(b)
-Added proposition 'b' to graph
->>> argset.propset() == {a, b}
+>>> v1 = argset.add_proposition(negb)
+Added proposition '-b' to graph
+>>> argset.propset() == {a, negb}
 True
->>> argset.add_proposition(a)
+>>> v0 = argset.add_proposition(a)
 Proposition 'a' is already in graph
 
 
@@ -99,7 +99,7 @@ CAES
 
 >>> argset.add_argument(arg1)
 Added proposition 'murder' to graph
-Added proposition '-intent' to graph
+Added proposition 'intent' to graph
 Added proposition 'kill' to graph
 >>> argset.add_argument(arg2, verbose=False)
 >>> argset.add_argument(arg3, verbose=False)
@@ -167,9 +167,9 @@ class Argument(object):
         """
         Propositions are either positive or negative atoms.
 
-        :param conclusion: PropLiteral
-        :param premises: set(PropLiteral)
-        :param exceptions: set(PropLiteral)
+        :param conclusion: :py:class:`PropLiteral`
+        :param premises: set(:py:class:`PropLiteral`)
+        :param exceptions: set(:py:class:`PropLiteral`)
         """
 
         self.conclusion = conclusion
@@ -183,12 +183,10 @@ class Argument(object):
         if len(self.premises) == 0:
             prems = "[]"
         else:
-            #prems = sorted(self.premises, key= lambda prop: prop.string)
             prems = sorted(self.premises)
         if len(self.exceptions) == 0:
             excepts = "[]"
         else:
-            #excepts = sorted(self.exceptions, key= lambda prop: prop.string)
             excepts = sorted(self.exceptions)
         return "{}, ~{} => {}, {}".format(prems, excepts, self.conclusion, self.weight)
 
@@ -207,33 +205,43 @@ class ArgumentSet(object):
             pass
         return props
 
-    def add_proposition(self, prop, verbose=True):
+    def add_proposition(self, prop, verbose=True):        
+        """
+        Add a proposition to a graph if it is not already present as a vertex.
+        
+        :param prop: The proposition to be added to the graph.
+        :type prop: :py:class:`PropLiteral`
+        :return: The graph vertex corresponding to the proposition.
+        :rtype: :py:class:`PropLiteral`
+        :raises TypeError: if the input is not a :py:class:`PropLiteral`.
+        """
         if isinstance(prop, PropLiteral):
             if prop in self.propset():
-                print("Proposition '{}' is already in graph".format(prop))
-                return False                                
+                if verbose:
+                    print("Proposition '{}' is already in graph".format(prop))                                           
             else:
-                print("Adding a new prop {} to propset {}".format(prop, self.propset()))
+                #print("Adding a new prop {} to propset {}".format(prop, self.propset()))
                 
                 self.graph.add_vertex(prop=prop)
-                #self.propset.add(prop)
-                print("Added proposition '{}' to graph".format(prop))
-                return True                
+                if verbose:
+                    print("Added proposition '{}' to graph".format(prop))
+            return self.graph.vs.select(prop=prop)[0]                
                 
         else:
-            raise AssertionError('Input {} should be PropLiteral'.format(prop))
+            raise TypeError('Input {} should be PropLiteral'.format(prop))
 
     def add_argument(self, argument, verbose=True):
+        """
+        Add an argument to the graph.
+        
+        :parameter argument: The argument to be added to the graph.
+        :type argument: :py:class:`Argument`
+        """
         g = self.graph
-        conclusion = argument.conclusion
-        self.add_proposition(conclusion, verbose=verbose)
-        v_conc = g.vs.select(prop=conclusion)[0]
-        newprops = set()
-        for prop in sorted(argument.premises):            
-            if self.add_proposition(prop, verbose=verbose):
-                newprops.add(prop)
-        v_new = [v for v in g.vs if v['prop'] in newprops]
-        edges = [(v_conc.index, target.index) for target in v_new]
+        conclusion = argument.conclusion        
+        v_conc = self.add_proposition(conclusion, verbose=verbose)        
+        new_vertices = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.premises)]       
+        edges = [(v_conc.index, target.index) for target in new_vertices]
         g.add_edges(edges)
         
 
