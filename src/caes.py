@@ -17,7 +17,11 @@ Get the negation of `c`.
 >>> print(c)
 -a
 >>> a.negate()
-a
+-a
+>>> a == a.negate()
+False
+>>> a == a.negate().negate()
+
 >>> d = b.negate()
 >>> print(d)
 b
@@ -97,6 +101,8 @@ CAES
 Added proposition 'murder' to graph
 Added proposition '-intent' to graph
 Added proposition 'kill' to graph
+>>> argset.add_argument(arg2, verbose=False)
+>>> argset.add_argument(arg3, verbose=False)
 >>> argset.draw()
 
 """
@@ -121,8 +127,9 @@ class PropLiteral(object):
         """
         Negation of a proposition.
         """
-        self.polarity = (not self.polarity)
-        return self
+        polarity = (not self.polarity)
+        return PropLiteral(self._string, polarity=polarity)
+    
 
     def __str__(self):
         """
@@ -202,12 +209,17 @@ class ArgumentSet(object):
 
     def add_proposition(self, prop, verbose=True):
         if isinstance(prop, PropLiteral):
-            if prop not in self.propset():
+            if prop in self.propset():
+                print("Proposition '{}' is already in graph".format(prop))
+                return False                                
+            else:
+                print("Adding a new prop {} to propset {}".format(prop, self.propset()))
+                
                 self.graph.add_vertex(prop=prop)
                 #self.propset.add(prop)
                 print("Added proposition '{}' to graph".format(prop))
-            else:
-                print("Proposition '{}' is already in graph".format(prop))
+                return True                
+                
         else:
             raise AssertionError('Input {} should be PropLiteral'.format(prop))
 
@@ -215,19 +227,22 @@ class ArgumentSet(object):
         g = self.graph
         conclusion = argument.conclusion
         self.add_proposition(conclusion, verbose=verbose)
-        for prop in sorted(argument.premises):
-            self.add_proposition(prop, verbose=verbose)
         v_conc = g.vs.select(prop=conclusion)[0]
-        v_prems = [v for v in g.vs if v['prop'] in argument.premises]
-        edges = [(v_conc.index, target.index) for target in v_prems]
+        newprops = set()
+        for prop in sorted(argument.premises):            
+            if self.add_proposition(prop, verbose=verbose):
+                newprops.add(prop)
+        v_new = [v for v in g.vs if v['prop'] in newprops]
+        edges = [(v_conc.index, target.index) for target in v_new]
         g.add_edges(edges)
-        pass
+        
 
 
     def draw(self):
         g = self.graph
         g.vs['label'] = g.vs['prop']
-        layout = g.layout_grid()
+        layout = g.layout_reingold_tilford()
+        layout = g.layout_auto()
         plot(g, layout=layout, vertex_label_size=16, vertex_size=8, vertex_label_dist=-5, margin=30)
 
 
@@ -279,6 +294,7 @@ def graph_test():
     props = [p for p in g.vs['prop']]
     print(props)
     layout = g.layout_grid()
+    layout = g.layout_auto()
     plot(g, layout=layout, vertex_label_size=16, vertex_size=8, vertex_label_dist=-5, margin=30)
 
 if __name__ == '__main__':
