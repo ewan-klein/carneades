@@ -316,23 +316,31 @@ class CAES(object):
         self.standard = standard
         
     def applicable(self, argument):
-        assum_bool = False
-        except_bool = False
-        if not argument.premises:
-            assum_bool = True
-        for p in argument.premises:
-            if p in self.assumptions or (p.negate() not in self.assumptions
-                                         and self.acceptable(p)):
-                assum_bool = True
+##        assum_bool = False
+##        except_bool = False
+        
+        argument.premises.issubset(p for p in argument.premises if \
+                                (p in self.assumptions or \
+                                (p.negate() not in self.assumptions and self.acceptable(p)))) \
+            and \
+##        if not argument.premises:
+##            assum_bool = True
+##        for p in argument.premises:
+##            if p in self.assumptions or (p.negate() not in self.assumptions
+##                                         and self.acceptable(p)):
+##                assum_bool = True
+        argument.exceptions.issubset(e for e in argument.exceptions if \
+                                (e not in self.assumptions and \
+                                (e.negate() in self.assumptions or not self.acceptable(p))))
                 
-        if not argument.exceptions:
-            except_bool = True            
-        for e in argument.exceptions:
-            if e not in self.assumptions and (e.negate() in self.assumptions
-                                         or not self.acceptable(p)):
-                except_bool = True
+##        if not argument.exceptions:
+##            except_bool = True            
+##        for e in argument.exceptions:
+##            if e not in self.assumptions and (e.negate() in self.assumptions
+##                                         or not self.acceptable(p)):
+##                except_bool = True
                           
-        return assum_bool and except_bool
+##        return assum_bool and except_bool
                 
        
                 
