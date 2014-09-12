@@ -89,14 +89,49 @@ Proof standard
 
 CAES
 
+Applicable
+==========
+
+Assume every prop is acceptable.
+
+>>> a = PropLiteral('a')
+>>> b = PropLiteral('b')
+>>> c = PropLiteral('c')
+>>> negb = b.negate()
+
+>>> assumptions1 = {a}
+>>> arg1 = Argument(c, premises={a, b})
 >>> argset = ArgumentSet()
 >>> weights = {}
->>> assumptions = {kill, witness1, witness2, unreliable2}
->>> audience = Audience(assumptions, weights)
+>>> audience = Audience(assumptions1, weights)
+>>> caes = CAES(argset, audience, ps)
+>>> caes.applicable(arg1)
+True
 
->>> arg1 = Argument(murder, premises={kill, intent}, weight=0.8)
->>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, weight=0.3)
->>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2}, weight=0.8)
+>>> assumptions2 = {a, negb}
+>>> arg1 = Argument(c, premises={a, b})
+>>> argset = ArgumentSet()
+>>> weights = {}
+>>> audience = Audience(assumptions2, weights)
+>>> caes = CAES(argset, audience, ps)
+>>> caes.applicable(arg1)
+False
+
+Vacuously true if there are no premises
+>>> arg2 = Argument(c, premises=set())
+>>> argset = ArgumentSet()
+>>> weights = {}
+>>> audience = Audience(assumptions1, weights)
+>>> caes = CAES(argset, audience, ps)
+>>> caes.applicable(arg2)
+True
+
+
+
+
+>>> arg1 = Argument(murder, premises={kill, intent})
+>>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
+>>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2})
 
 >>> argset.add_argument(arg1)
 Added proposition 'murder' to graph
@@ -107,9 +142,10 @@ Added proposition 'kill' to graph
 >>> argset.add_argument(arg3, verbose=False)
 >>> #argset.draw()
 
-
+>>> assumptions = {kill, witness1, witness2, unreliable2}
+>>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
->>> caes.applicable(arg1)
+
 
 """
 
@@ -316,32 +352,15 @@ class CAES(object):
         self.standard = standard
         
     def applicable(self, argument):
-##        assum_bool = False
-##        except_bool = False
-        
+        return \
         argument.premises.issubset(p for p in argument.premises if \
                                 (p in self.assumptions or \
                                 (p.negate() not in self.assumptions and self.acceptable(p)))) \
-            and \
-##        if not argument.premises:
-##            assum_bool = True
-##        for p in argument.premises:
-##            if p in self.assumptions or (p.negate() not in self.assumptions
-##                                         and self.acceptable(p)):
-##                assum_bool = True
+        and \
         argument.exceptions.issubset(e for e in argument.exceptions if \
                                 (e not in self.assumptions and \
                                 (e.negate() in self.assumptions or not self.acceptable(p))))
-                
-##        if not argument.exceptions:
-##            except_bool = True            
-##        for e in argument.exceptions:
-##            if e not in self.assumptions and (e.negate() in self.assumptions
-##                                         or not self.acceptable(p)):
-##                except_bool = True
-                          
-##        return assum_bool and except_bool
-                
+                              
        
                 
     
