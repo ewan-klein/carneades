@@ -92,23 +92,29 @@ CAES
 >>> argset = ArgumentSet()
 >>> weights = {}
 >>> assumptions = {kill, witness1, witness2, unreliable2}
->>> caes = CAES(argset, assumptions, weights, ps)
+>>> audience = Audience(assumptions, weights)
+
 >>> arg1 = Argument(murder, premises={kill, intent}, weight=0.8)
 >>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, weight=0.3)
 >>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2}, weight=0.8)
 
 >>> argset.add_argument(arg1)
 Added proposition 'murder' to graph
+Added proposition '-murder' to graph
 Added proposition 'intent' to graph
 Added proposition 'kill' to graph
 >>> argset.add_argument(arg2, verbose=False)
 >>> argset.add_argument(arg3, verbose=False)
->>> argset.draw()
+>>> #argset.draw()
+
+
+>>> caes = CAES(argset, audience, ps)
+>>> caes.applicable(arg1)
 
 """
 
 from igraph import *
-from collections import defaultdict
+from collections import namedtuple
 
 class PropLiteral(object):
     """
@@ -163,7 +169,7 @@ class PropLiteral(object):
 
 
 class Argument(object):
-    def __init__(self, conclusion, premises=set(), exceptions=set(), weight=1.0):
+    def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None, weight=1.0):
         """
         Propositions are either positive or negative atoms.
 
@@ -195,6 +201,7 @@ class ArgumentSet(object):
     def __init__(self):
         self.graph = Graph()
         self.graph.to_directed()
+        self.arg_count = 0
 
     def propset(self):
         g = self.graph
@@ -238,17 +245,35 @@ class ArgumentSet(object):
         :type argument: :py:class:`Argument`
         """
         g = self.graph
-        conclusion = argument.conclusion        
-        v_conc = self.add_proposition(conclusion, verbose=verbose)        
-        new_vertices = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.premises)]       
-        edges = [(v_conc.index, target.index) for target in new_vertices]
+        arg_id = 'arg{}'.format(self.arg_count)
+        self.arg_count += 1
+        
+        conclusions = [argument.conclusion, argument.conclusion.negate()]     
+        v_conclusions = [self.add_proposition(conc, verbose=verbose) for conc in conclusions]        
+        v_premises = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.premises)]
+        v_exceptions = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.exceptions)]
+        v_targets = v_premises + v_exceptions
+        edges = [(v_conc.index, target.index) for v_conc in v_conclusions for target in v_targets]
         g.add_edges(edges)
+        for v_conc in v_conclusions:
+            try:   
+                g.es.select(_source=v_conc.index)['args'].append(arg_id)
+            except KeyError:
+                g.es.select(_source=v_conc.index)['args'] = [arg_id]
+        
         
 
 
     def draw(self):
         g = self.graph
-        g.vs['label'] = g.vs['prop']
+        try:
+            g.vs['label'] = g.vs['prop']
+        except KeyError:
+            pass
+        try:
+            g.es['label'] = g.es['args']
+        except KeyError:
+            pass        
         layout = g.layout_reingold_tilford()
         layout = g.layout_auto()
         plot(g, layout=layout, vertex_label_size=16, vertex_size=8, vertex_label_dist=-5, margin=30)
@@ -273,13 +298,49 @@ class ProofStandard(object):
         return self.config[prop]
 
 
+Audience = namedtuple('Audience', ['assumptions', 'argweight'])
+
+
 
 class CAES(object):
-    def __init__(self, argset, assumptions, weights, standard):
+    def __init__(self, argset, audience, standard):
+        """
+        
+        :type argset: :py:class:`ArgSet`
+        :type audience: :py:object:`Audience`
+        :type standard: :py:class:`ArgSet`
+        """
         self.argset = argset
-        self.assumptions = assumptions
-        self.weights = weights
+        self.assumptions = audience.assumptions
+        self.weights = audience.argweight
         self.standard = standard
+        
+    def applicable(self, argument):
+        assum_bool = False
+        except_bool = False
+        if not argument.premises:
+            assum_bool = True
+        for p in argument.premises:
+            if p in self.assumptions or (p.negate() not in self.assumptions
+                                         and self.acceptable(p)):
+                assum_bool = True
+                
+        if not argument.exceptions:
+            except_bool = True            
+        for e in argument.exceptions:
+            if e not in self.assumptions and (e.negate() in self.assumptions
+                                         or not self.acceptable(p)):
+                except_bool = True
+                          
+        return assum_bool and except_bool
+                
+       
+                
+    
+    def acceptable(self, argument):
+        return True
+                
+                
 
 
 
@@ -299,6 +360,8 @@ def graph_test():
     g.vs['label'] = g.vs['prop']
 
     g.add_edges([(2, 0), (2, 1)])
+    g.es['arg'] = ['arg1']
+    g.es['label'] = g.es['arg']
     props = [p for p in g.vs['prop']]
     print(props)
     layout = g.layout_grid()
