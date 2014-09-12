@@ -352,15 +352,23 @@ class CAES(object):
         self.standard = standard
         
     def applicable(self, argument):
-        return \
-        argument.premises.issubset(p for p in argument.premises if \
-                                (p in self.assumptions or \
-                                (p.negate() not in self.assumptions and self.acceptable(p)))) \
-        and \
-        argument.exceptions.issubset(e for e in argument.exceptions if \
-                                (e not in self.assumptions and \
-                                (e.negate() in self.assumptions or not self.acceptable(p))))
-                              
+##        return \
+##        argument.premises.issubset(p for p in argument.premises if \
+##                                (p in self.assumptions or \
+##                                (p.negate() not in self.assumptions and self.acceptable(p)))) \
+##        and \
+##        argument.exceptions.issubset(e for e in argument.exceptions if \
+##                                (e not in self.assumptions and \
+##                                (e.negate() in self.assumptions or not self.acceptable(p))))
+    
+        b1 = all(p in self.assumptions or \
+                 (p.negate() not in self.assumptions and self.acceptable(p)) for p in argument.premises)
+        
+        b2 = all(e not in self.assumptions and \
+                 (e.negate() in self.assumptions or not self.acceptable(p)) for e in argument.exceptions)
+        
+        return b1 and b2
+                                  
        
                 
     
