@@ -1,5 +1,9 @@
 """
-Implementation of the Carneades model of argumentation.
+Carneades model of argumentation
+================================
+
+Propositions
+------------
 
 Construct some proposition literals.
 
@@ -38,6 +42,8 @@ e
 True
 
 
+Arguments
+---------
 
 Construct some arguments.
 
@@ -57,7 +63,9 @@ Construct some arguments.
 [e], ~[] => -b, 1.0
 [-i, h], ~[-b] => a, 1.0
 
+
 Argument set
+------------
 
 >>> argset = ArgumentSet()
 >>> v0 = argset.add_proposition(a)
@@ -81,16 +89,19 @@ Proposition 'a' is already in graph
 >>> witness2 = PropLiteral('witness2')
 >>> unreliable2 = PropLiteral('unreliable2')
 
+
 Proof standard
+--------------
 
 >>> ps = ProofStandard()
 >>> d = {intent: "beyond_reasonable_doubt"}
 >>> ps.set_standard(intent="beyond_reasonable_doubt")
 
 CAES
+----
 
 Applicable
-==========
+++++++++++
 
 Assume every prop is acceptable.
 
@@ -118,6 +129,7 @@ True
 False
 
 Vacuously true if there are no premises
+
 >>> arg2 = Argument(c, premises=set())
 >>> argset = ArgumentSet()
 >>> weights = {}
