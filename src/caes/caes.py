@@ -217,6 +217,10 @@ class PropLiteral(object):
 
 
 class Argument(object):
+    """
+    An argument consists of a conclusion, and optionally premises and
+    exceptions.
+    """
     def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None, weight=1.0):
         """
         Propositions are either positive or negative atoms.
@@ -246,12 +250,21 @@ class Argument(object):
 
 
 class ArgumentSet(object):
+    """
+    An ArgumentSet is modeled as a dependency graph where vertices represent
+    the components of an argument. A vertex corresponding to the conclusion
+    of an argument A will depend on the premises and exceptions in A.
+    """
     def __init__(self):
         self.graph = Graph()
         self.graph.to_directed()
         self.arg_count = 0
 
     def propset(self):
+        """
+        The set of :py:class:`PropLiteral`\ s represented by the vertices in
+        the graph.
+        """
         g = self.graph
         props = set()
         try:
@@ -351,6 +364,9 @@ Audience = namedtuple('Audience', ['assumptions', 'argweight'])
 
 
 class CAES(object):
+    """
+    The class that represents a Carneades Argument Evaluation Structure.
+    """
     def __init__(self, argset, audience, standard):
         """
         
@@ -364,6 +380,12 @@ class CAES(object):
         self.standard = standard
         
     def applicable(self, argument):
+        """
+        
+        :parameter argument: The argument whose applicablility is being determined.
+        :type argument: :py:class:`Argument`
+        :rtype: Boolean
+        """
 ##        return \
 ##        argument.premises.issubset(p for p in argument.premises if \
 ##                                (p in self.assumptions or \
