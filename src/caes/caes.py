@@ -100,8 +100,8 @@ Proof standard
 CAES
 ----
 
-Applicable
-++++++++++
+Applicable Arguments in a CAES
+++++++++++++++++++++++++++++++
 
 Assume every prop is acceptable.
 
@@ -167,7 +167,9 @@ from collections import namedtuple
 class PropLiteral(object):
     """
     Proposition literals have most of the properties of ordinary strings,
-    except that the negation method is Boolean; ie. a.negate().negate() == a.
+    except that the negation method is Boolean; i.e. 
+    >>> a.negate().negate() == a
+    True
     """
     def __init__(self, string, polarity=True):
         """
@@ -180,6 +182,8 @@ class PropLiteral(object):
     def negate(self):
         """
         Negation of a proposition.
+        
+        We create a copy of the current proposition and flip its polarity.
         """
         polarity = (not self.polarity)
         return PropLiteral(self._string, polarity=polarity)
@@ -187,7 +191,7 @@ class PropLiteral(object):
 
     def __str__(self):
         """
-        Override __str__ so that negation is realised as a prefix on the
+        Override ``__str__()`` so that negation is realised as a prefix on the
         string.
         """
         if self.polarity:
@@ -218,13 +222,11 @@ class PropLiteral(object):
 
 class Argument(object):
     """
-    An argument consists of a conclusion, and optionally premises and
-    exceptions.
+    An argument consists of a conclusion, a set of premises and a set of
+    exceptions (both of which can be empty).
     """
     def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None, weight=1.0):
-        """
-        Propositions are either positive or negative atoms.
-
+        """        
         :param conclusion: :py:class:`PropLiteral`
         :param premises: set(:py:class:`PropLiteral`)
         :param exceptions: set(:py:class:`PropLiteral`)
@@ -251,9 +253,9 @@ class Argument(object):
 
 class ArgumentSet(object):
     """
-    An ArgumentSet is modeled as a dependency graph where vertices represent
+    An ``ArgumentSet`` is modeled as a dependency graph where vertices represent
     the components of an argument. A vertex corresponding to the conclusion
-    of an argument A will depend on the premises and exceptions in A.
+    of an argument *A* will depend on the premises and exceptions in *A*.
     """
     def __init__(self):
         self.graph = Graph()
@@ -326,6 +328,9 @@ class ArgumentSet(object):
 
 
     def draw(self):
+        """
+        Visualise an :py:class:`ArgumentSet` as a labeled graph.
+        """
         g = self.graph
         try:
             g.vs['label'] = g.vs['prop']
@@ -342,6 +347,9 @@ class ArgumentSet(object):
 
 
 class ProofStandard(object):
+    """
+    Each proposition in a CAES is associated with a proof standard.
+    """
     def __init__(self, default='scintilla'):
         self.proof_standards = ["scintilla", "preponderance",
                                 "clear_and_convincing", "beyond_reasonable_doubt",
@@ -360,12 +368,16 @@ class ProofStandard(object):
 
 
 Audience = namedtuple('Audience', ['assumptions', 'argweight'])
+"""
+An audience has assumptions about which premises hold and also
+assigns weights to arguments.
+"""
 
 
 
 class CAES(object):
     """
-    The class that represents a Carneades Argument Evaluation Structure.
+    A class that represents a Carneades Argument Evaluation Structure (CAES).
     """
     def __init__(self, argset, audience, standard):
         """
@@ -381,6 +393,7 @@ class CAES(object):
         
     def applicable(self, argument):
         """
+        An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.
         
         :parameter argument: The argument whose applicablility is being determined.
         :type argument: :py:class:`Argument`
@@ -406,7 +419,12 @@ class CAES(object):
        
                 
     
-    def acceptable(self, argument):
+    def acceptable(self, proposition):
+        """
+        A conclusion is *acceptable* in a CAES if it can be arrived at under
+        the relevant proof standards, given the beliefs of the audience.
+        """
+        
         return True
                 
                 
