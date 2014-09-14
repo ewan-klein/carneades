@@ -182,8 +182,7 @@ class ArgumentSet(object):
                 if verbose:
                     print("Proposition '{}' is already in graph".format(prop))                                           
             else:
-                #print("Adding a new prop {} to propset {}".format(prop, self.propset()))
-                
+
                 self.graph.add_vertex(prop=prop)
                 if verbose:
                     print("Added proposition '{}' to graph".format(prop))
@@ -204,31 +203,17 @@ class ArgumentSet(object):
         argument.arg_id = arg_id
         self.arg_count += 1
         
-        self.graph.add_vertex(arg_id)
+        self.graph.add_vertex(arg=arg_id)
+        v_arg = g.vs.select(arg=arg_id)[0]
         conclusions = [argument.conclusion, argument.conclusion.negate()]     
         v_conclusions = [self.add_proposition(conc, verbose=verbose) for conc in conclusions]        
         v_premises = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.premises)]
         v_exceptions = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.exceptions)]
         v_targets = v_premises + v_exceptions
-        edges = [(v_conc.index, target.index) for v_conc in v_conclusions for target in v_targets]
-        g.add_edges(edges)
+        edges_to_arg = [(v_conc.index, v_arg.index) for v_conc in v_conclusions]
+        edges_from_arg = [(v_arg.index, target.index) for target in v_targets]
+        g.add_edges(edges_to_arg + edges_from_arg)
         
-        
-        
-        #for v_conc in v_conclusions:
-            #_edges = g.es.select(_source=v_conc.index)
-            #if 'args' in g.es.select(_source=v_conc.index).attributes():
-                #labels = g.es.select(_source=v_conc.index)['args']
-                #if None not in labels:
-                    #g.es.select(_source=v_conc.index)['args'] = [arg + ' ' + arg_id for arg in labels]
-            #else:
-                #g.es.select(_source=v_conc.index)['args'] = [arg_id]
-                #pass
-            #try:   
-                #g.es.select(_source=v_conc.index)['args'] = g.es.select(_source=v_conc.index)['args'] + ' ' + arg_id
-                #pass
-            #except KeyError:
-                #g.es.select(_source=v_conc.index)['args'] = arg_id
         
     def arguments_for(self, proposition):
         """
@@ -237,7 +222,7 @@ class ArgumentSet(object):
         :param proposition: The proposition to be checked.
         :type proposition: :class:`PropLiteral`
         :return: A list of the arguments pro the proposition
-        :rtype: list:(class:`Argument`)
+        :rtype: list(:class:`Argument`)
         """
         pass
 
@@ -247,14 +232,19 @@ class ArgumentSet(object):
         Visualise an :class:`ArgumentSet` as a labeled graph.
         """
         g = self.graph
-        try:
-            g.vs['label'] = g.vs['prop']
-        except KeyError:      
-            pass
-        try:
-            g.es['label'] = g.es['args']
-        except KeyError:
-            pass        
+        labels = g.vs['prop']
+        for i in range(len(labels)):
+            if g.vs['arg'][i] is not None:
+                labels[i] = g.vs['arg'][i]
+        g.vs['label'] = labels
+        #try:
+            #g.vs['label'] = g.vs['prop']
+        #except KeyError:      
+            #pass
+        #try:
+            #g.es['label'] = g.es['args']
+        #except KeyError:
+            #pass        
         layout = g.layout_reingold_tilford()
         layout = g.layout_auto()
         plot(g, layout=layout, vertex_label_size=16, vertex_size=8, vertex_label_dist=-5, margin=30)
