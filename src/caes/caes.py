@@ -31,13 +31,16 @@ Added proposition 'intent' to graph
 Added proposition 'kill' to graph
 >>> argset.add_argument(arg2, verbose=False)
 >>> argset.add_argument(arg3, verbose=False)
->>> argset.draw()
+>>> #argset.draw()
+>>> argset.arguments_for(murder)
 
 >>> assumptions = {kill, witness1, witness2, unreliable2}
 >>> weights = {}
 >>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
 >>> caes.applicable(arg1)
+
+
 
 
 """
@@ -153,6 +156,7 @@ class ArgumentSet(object):
         self.graph = Graph()
         self.graph.to_directed()
         self.arg_count = 0
+        self.arguments = []
 
     def propset(self):
         """
@@ -202,6 +206,7 @@ class ArgumentSet(object):
         arg_id = 'arg{}'.format(self.arg_count)
         argument.arg_id = arg_id
         self.arg_count += 1
+        self.arguments.append(argument)
         
         self.graph.add_vertex(arg=arg_id)
         v_arg = g.vs.select(arg=arg_id)[0]
@@ -224,7 +229,13 @@ class ArgumentSet(object):
         :return: A list of the arguments pro the proposition
         :rtype: list(:class:`Argument`)
         """
-        pass
+        g = self.graph
+        index_conc = g.vs.select(prop=proposition)[0].index
+        v_targets = [e.target for e in g.es.select(_source=index_conc)]
+        v_out = [g.vs[i] for i in v_targets]
+        args = [v['arg'] for v in v_out]
+        return [arg for arg in self.arguments if arg.arg_id in args]
+        
 
 
     def draw(self):
@@ -241,7 +252,7 @@ class ArgumentSet(object):
         
         roots = [i for i in range(len(g.vs)) if g.indegree()[i] == 0]
         layout = g.layout_reingold_tilford(mode=ALL, root=roots)
-        #layout = g.layout_auto()
+
         plot_style = {}
         plot_style['vertex_color'] = ['lightblue' if x is None else 'pink' for x in g.vs['arg'] ]  
         plot_style['vertex_size'] = 60
