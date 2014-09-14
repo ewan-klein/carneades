@@ -103,7 +103,7 @@ CAES
 Applicable Arguments in a CAES
 ++++++++++++++++++++++++++++++
 
-Assume every prop is acceptable.
+
 
 >>> a = PropLiteral('a')
 >>> b = PropLiteral('b')
@@ -116,7 +116,12 @@ Assume every prop is acceptable.
 >>> weights = {}
 >>> audience = Audience(assumptions1, weights)
 >>> caes = CAES(argset, audience, ps)
->>> caes.applicable(arg1)
+
+Assume every prop is acceptable.
+
+>>> acceptability = lambda p: True
+
+>>> caes._applicable(arg1, acceptability)
 True
 
 >>> assumptions2 = {a, negb}
@@ -125,7 +130,7 @@ True
 >>> weights = {}
 >>> audience = Audience(assumptions2, weights)
 >>> caes = CAES(argset, audience, ps)
->>> caes.applicable(arg1)
+>>> caes._applicable(arg1, acceptability)
 False
 
 Vacuously true if there are no premises
@@ -135,7 +140,7 @@ Vacuously true if there are no premises
 >>> weights = {}
 >>> audience = Audience(assumptions1, weights)
 >>> caes = CAES(argset, audience, ps)
->>> caes.applicable(arg2)
+>>> caes._applicable(arg2, acceptability)
 True
 
 
@@ -168,6 +173,8 @@ class PropLiteral(object):
     """
     Proposition literals have most of the properties of ordinary strings,
     except that the negation method is Boolean; i.e. 
+    
+    >>> a = PropLiteral('a')
     >>> a.negate().negate() == a
     True
     """
@@ -414,8 +421,34 @@ class CAES(object):
         b2 = all(e not in self.assumptions and \
                  (e.negate() in self.assumptions or not self.acceptable(p)) for e in argument.exceptions)
         
-        return b1 and b2
+        acceptability = lambda p: self.acceptable(p)
+        
+        return self._applicable(argument, acceptability)
                                   
+    def _applicable(self, argument, acceptability):
+        """
+        An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.
+        
+        :parameter argument: The argument whose applicablility is being determined.
+        :type argument: :py:class:`Argument`
+        :rtype: Boolean
+        """
+##        return \
+##        argument.premises.issubset(p for p in argument.premises if \
+##                                (p in self.assumptions or \
+##                                (p.negate() not in self.assumptions and self.acceptable(p)))) \
+##        and \
+##        argument.exceptions.issubset(e for e in argument.exceptions if \
+##                                (e not in self.assumptions and \
+##                                (e.negate() in self.assumptions or not self.acceptable(p))))
+    
+        b1 = all(p in self.assumptions or \
+                 (p.negate() not in self.assumptions and acceptability(p)) for p in argument.premises)
+        
+        b2 = all(e not in self.assumptions and \
+                 (e.negate() in self.assumptions or not sacceptability(p)) for e in argument.exceptions)
+        
+        return b1 and b2
        
                 
     
