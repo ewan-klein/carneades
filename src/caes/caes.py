@@ -145,6 +145,11 @@ True
 
 
 
+Using a CAES
+++++++++++++
+
+>>> ps = ProofStandard(default='scintilla')
+>>> ps.set_standard(intent="beyond_reasonable_doubt")
 
 >>> arg1 = Argument(murder, premises={kill, intent})
 >>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
@@ -162,6 +167,7 @@ Added proposition 'kill' to graph
 >>> assumptions = {kill, witness1, witness2, unreliable2}
 >>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
+>>> caes.applicable(arg1)
 
 
 """
@@ -234,9 +240,9 @@ class Argument(object):
     """
     def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None, weight=1.0):
         """        
-        :param conclusion: :py:class:`PropLiteral`
-        :param premises: set(:py:class:`PropLiteral`)
-        :param exceptions: set(:py:class:`PropLiteral`)
+        :param conclusion: :class:`PropLiteral`
+        :param premises: set(:class:`PropLiteral`)
+        :param exceptions: set(:class:`PropLiteral`)
         """
 
         self.conclusion = conclusion
@@ -271,7 +277,7 @@ class ArgumentSet(object):
 
     def propset(self):
         """
-        The set of :py:class:`PropLiteral`\ s represented by the vertices in
+        The set of :class:`PropLiteral`\ s represented by the vertices in
         the graph.
         """
         g = self.graph
@@ -287,10 +293,10 @@ class ArgumentSet(object):
         Add a proposition to a graph if it is not already present as a vertex.
         
         :param prop: The proposition to be added to the graph.
-        :type prop: :py:class:`PropLiteral`
+        :type prop: :class:`PropLiteral`
         :return: The graph vertex corresponding to the proposition.
-        :rtype: :py:class:`PropLiteral`
-        :raises TypeError: if the input is not a :py:class:`PropLiteral`.
+        :rtype: :class:`PropLiteral`
+        :raises TypeError: if the input is not a :class:`PropLiteral`.
         """
         if isinstance(prop, PropLiteral):
             if prop in self.propset():
@@ -312,7 +318,7 @@ class ArgumentSet(object):
         Add an argument to the graph.
         
         :parameter argument: The argument to be added to the graph.
-        :type argument: :py:class:`Argument`
+        :type argument: :class:`Argument`
         """
         g = self.graph
         arg_id = 'arg{}'.format(self.arg_count)
@@ -336,7 +342,7 @@ class ArgumentSet(object):
 
     def draw(self):
         """
-        Visualise an :py:class:`ArgumentSet` as a labeled graph.
+        Visualise an :class:`ArgumentSet` as a labeled graph.
         """
         g = self.graph
         try:
@@ -385,62 +391,39 @@ assigns weights to arguments.
 class CAES(object):
     """
     A class that represents a Carneades Argument Evaluation Structure (CAES).
+ 
     """
-    def __init__(self, argset, audience, standard):
+    def __init__(self, argset, audience, proofstandard):
         """
         
-        :type argset: :py:class:`ArgSet`
-        :type audience: :py:object:`Audience`
-        :type standard: :py:class:`ArgSet`
+        :type argset: :class:`ArgSet`
+        :type audience: :class:`Audience`
+        :type standard: :class:`ProofStandard`
         """
         self.argset = argset
         self.assumptions = audience.assumptions
         self.weights = audience.argweight
-        self.standard = standard
+        self.standard = proofstandard
         
     def applicable(self, argument):
         """
         An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.
         
         :parameter argument: The argument whose applicablility is being determined.
-        :type argument: :py:class:`Argument`
-        :rtype: Boolean
+        :type argument: :class:`Argument`
+        :rtype: bool
         """
-##        return \
-##        argument.premises.issubset(p for p in argument.premises if \
-##                                (p in self.assumptions or \
-##                                (p.negate() not in self.assumptions and self.acceptable(p)))) \
-##        and \
-##        argument.exceptions.issubset(e for e in argument.exceptions if \
-##                                (e not in self.assumptions and \
-##                                (e.negate() in self.assumptions or not self.acceptable(p))))
-    
-        b1 = all(p in self.assumptions or \
-                 (p.negate() not in self.assumptions and self.acceptable(p)) for p in argument.premises)
-        
-        b2 = all(e not in self.assumptions and \
-                 (e.negate() in self.assumptions or not self.acceptable(p)) for e in argument.exceptions)
-        
-        acceptability = lambda p: self.acceptable(p)
-        
+        acceptability = lambda p: self.acceptable(p)        
         return self._applicable(argument, acceptability)
                                   
     def _applicable(self, argument, acceptability):
-        """
-        An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.
-        
+        """       
         :parameter argument: The argument whose applicablility is being determined.
-        :type argument: :py:class:`Argument`
-        :rtype: Boolean
+        :type argument: :class:`Argument`
+        :parameter acceptability: The function which determines the acceptability of a proposition in the CAES.
+        :type acceptability: LambdaType
+        :rtype: bool
         """
-##        return \
-##        argument.premises.issubset(p for p in argument.premises if \
-##                                (p in self.assumptions or \
-##                                (p.negate() not in self.assumptions and self.acceptable(p)))) \
-##        and \
-##        argument.exceptions.issubset(e for e in argument.exceptions if \
-##                                (e not in self.assumptions and \
-##                                (e.negate() in self.assumptions or not self.acceptable(p))))
     
         b1 = all(p in self.assumptions or \
                  (p.negate() not in self.assumptions and acceptability(p)) for p in argument.premises)
@@ -458,13 +441,15 @@ class CAES(object):
         the relevant proof standards, given the beliefs of the audience.
         """
         
-        return True
+        return self.proof_standard(proposition)
                 
-                
+  
+    def proof_standard(self, proposition):
+        return False
 
 
 
-DOCTEST = True
+DOCTEST = 0
 
 def graph_test():
 
