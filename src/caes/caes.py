@@ -237,17 +237,19 @@ class ArgumentSet(object):
             if g.vs['arg'][i] is not None:
                 labels[i] = g.vs['arg'][i]
         g.vs['label'] = labels
-        #try:
-            #g.vs['label'] = g.vs['prop']
-        #except KeyError:      
-            #pass
-        #try:
-            #g.es['label'] = g.es['args']
-        #except KeyError:
-            #pass        
-        layout = g.layout_reingold_tilford()
-        layout = g.layout_auto()
-        plot(g, layout=layout, vertex_label_size=16, vertex_size=8, vertex_label_dist=-5, margin=30)
+      
+        
+        roots = [i for i in range(len(g.vs)) if g.indegree()[i] == 0]
+        layout = g.layout_reingold_tilford(mode=ALL, root=roots)
+        #layout = g.layout_auto()
+        plot_style = {}
+        plot_style['vertex_color'] = ['lightblue' if x is None else 'pink' for x in g.vs['arg'] ]  
+        plot_style['vertex_size'] = 60
+        plot_style['vertex_shape'] = ['circle' if x is None else 'rect' for x in g.vs['arg'] ]      
+        plot_style['margin'] = 40
+        plot_style['layout'] = layout
+        
+        plot(g, **plot_style)
 
 
 
