@@ -2,83 +2,10 @@
 Carneades model of argumentation
 ================================
 
-Propositions
-------------
-
-Construct some proposition literals.
-
->>> a = PropLiteral('a')
->>> negb = PropLiteral('b', False)
-
->>> print(a)
-a
->>> print(negb)
--b
-
-Get the negation of `c`.
-
->>> c = a.negate()
->>> print(c)
--a
->>> a.negate()
--a
->>> a == a.negate()
-False
->>> a == a.negate().negate()
-True
->>> d = negb.negate()
->>> print(d)
-b
-
->>> e = PropLiteral('e')
->>> g = PropLiteral('e')
->>> print(e == g)
-True
-
->>> f = e.negate().negate()
->>> print(f)
-e
->>> print(e == f)
-True
 
 
-Arguments
----------
-
-Construct some arguments.
-
->>> arg1 = Argument(a, premises={negb}, weight=0.3)
->>> arg2 = Argument(negb, premises={e}, weight=0.6)
->>> arg3 = Argument(negb, premises={g})
-
->>> h = PropLiteral('h')
->>> i = PropLiteral('i', False)
->>> arg4 = Argument(a, premises={h, i}, exceptions={negb})
-
->>> args = [arg1, arg2, arg3, arg4]
->>> for arg in args:
-...     print(arg)
-[-b], ~[] => a, 0.3
-[e], ~[] => -b, 0.6
-[e], ~[] => -b, 1.0
-[-i, h], ~[-b] => a, 1.0
-
-
-Argument set
-------------
-
->>> argset = ArgumentSet()
->>> v0 = argset.add_proposition(a)
-Added proposition 'a' to graph
->>> argset.propset()
-{a}
->>> v1 = argset.add_proposition(negb)
-Added proposition '-b' to graph
->>> argset.propset() == {a, negb}
-True
->>> v0 = argset.add_proposition(a)
-Proposition 'a' is already in graph
-
+Using a CAES
+++++++++++++
 
 >>> kill = PropLiteral('kill')
 >>> intent = PropLiteral('intent')
@@ -89,65 +16,6 @@ Proposition 'a' is already in graph
 >>> witness2 = PropLiteral('witness2')
 >>> unreliable2 = PropLiteral('unreliable2')
 
-
-Proof standard
---------------
-
->>> ps = ProofStandard()
->>> d = {intent: "beyond_reasonable_doubt"}
->>> ps.set_standard(intent="beyond_reasonable_doubt")
-
-CAES
-----
-
-Applicable Arguments in a CAES
-++++++++++++++++++++++++++++++
-
-
-
->>> a = PropLiteral('a')
->>> b = PropLiteral('b')
->>> c = PropLiteral('c')
->>> negb = b.negate()
-
->>> assumptions1 = {a}
->>> arg1 = Argument(c, premises={a, b})
->>> argset = ArgumentSet()
->>> weights = {}
->>> audience = Audience(assumptions1, weights)
->>> caes = CAES(argset, audience, ps)
-
-Assume every prop is acceptable.
-
->>> acceptability = lambda p: True
-
->>> caes._applicable(arg1, acceptability)
-True
-
->>> assumptions2 = {a, negb}
->>> arg1 = Argument(c, premises={a, b})
->>> argset = ArgumentSet()
->>> weights = {}
->>> audience = Audience(assumptions2, weights)
->>> caes = CAES(argset, audience, ps)
->>> caes._applicable(arg1, acceptability)
-False
-
-Vacuously true if there are no premises
-
->>> arg2 = Argument(c, premises=set())
->>> argset = ArgumentSet()
->>> weights = {}
->>> audience = Audience(assumptions1, weights)
->>> caes = CAES(argset, audience, ps)
->>> caes._applicable(arg2, acceptability)
-True
-
-
-
-Using a CAES
-++++++++++++
-
 >>> ps = ProofStandard(default='scintilla')
 >>> ps.set_standard(intent="beyond_reasonable_doubt")
 
@@ -155,6 +23,7 @@ Using a CAES
 >>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
 >>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2})
 
+>>> argset = ArgumentSet()
 >>> argset.add_argument(arg1)
 Added proposition 'murder' to graph
 Added proposition '-murder' to graph
@@ -162,9 +31,10 @@ Added proposition 'intent' to graph
 Added proposition 'kill' to graph
 >>> argset.add_argument(arg2, verbose=False)
 >>> argset.add_argument(arg3, verbose=False)
->>> #argset.draw()
+>>> argset.draw()
 
 >>> assumptions = {kill, witness1, witness2, unreliable2}
+>>> weights = {}
 >>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
 >>> caes.applicable(arg1)
@@ -240,14 +110,23 @@ class Argument(object):
     """
     def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None, weight=1.0):
         """        
-        :param conclusion: :class:`PropLiteral`
-        :param premises: set(:class:`PropLiteral`)
-        :param exceptions: set(:class:`PropLiteral`)
+        :param conclusion: The conclusion of the argument.
+        :type conclusion: :class:`PropLiteral`
+        :param premises: The premises of the argument.
+        :type premises: set(:class:`PropLiteral`)
+        :param exceptions: The exceptions of the argument
+        :type exceptions: set(:class:`PropLiteral`)
+        :param arg_id: The exceptions of the argument
+        :type arg_id: None or str
+        :param weight: The exceptions of the argument
+        :type arg_id: None or str
+        
         """
 
         self.conclusion = conclusion
         self.premises = premises
         self.exceptions = exceptions
+        self.arg_id = arg_id
         self.weight = weight
 
 
@@ -322,8 +201,10 @@ class ArgumentSet(object):
         """
         g = self.graph
         arg_id = 'arg{}'.format(self.arg_count)
+        argument.arg_id = arg_id
         self.arg_count += 1
         
+        self.graph.add_vertex(arg_id)
         conclusions = [argument.conclusion, argument.conclusion.negate()]     
         v_conclusions = [self.add_proposition(conc, verbose=verbose) for conc in conclusions]        
         v_premises = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.premises)]
@@ -331,13 +212,34 @@ class ArgumentSet(object):
         v_targets = v_premises + v_exceptions
         edges = [(v_conc.index, target.index) for v_conc in v_conclusions for target in v_targets]
         g.add_edges(edges)
-        for v_conc in v_conclusions:
-            try:   
-                g.es.select(_source=v_conc.index)['args'].append(arg_id)
-            except KeyError:
-                g.es.select(_source=v_conc.index)['args'] = [arg_id]
         
         
+        
+        #for v_conc in v_conclusions:
+            #_edges = g.es.select(_source=v_conc.index)
+            #if 'args' in g.es.select(_source=v_conc.index).attributes():
+                #labels = g.es.select(_source=v_conc.index)['args']
+                #if None not in labels:
+                    #g.es.select(_source=v_conc.index)['args'] = [arg + ' ' + arg_id for arg in labels]
+            #else:
+                #g.es.select(_source=v_conc.index)['args'] = [arg_id]
+                #pass
+            #try:   
+                #g.es.select(_source=v_conc.index)['args'] = g.es.select(_source=v_conc.index)['args'] + ' ' + arg_id
+                #pass
+            #except KeyError:
+                #g.es.select(_source=v_conc.index)['args'] = arg_id
+        
+    def arguments_for(self, proposition):
+        """
+        Find the arguments for a proposition in an *ArgSet*.
+        
+        :param proposition: The proposition to be checked.
+        :type proposition: :class:`PropLiteral`
+        :return: A list of the arguments pro the proposition
+        :rtype: list:(class:`Argument`)
+        """
+        pass
 
 
     def draw(self):
@@ -347,7 +249,7 @@ class ArgumentSet(object):
         g = self.graph
         try:
             g.vs['label'] = g.vs['prop']
-        except KeyError:
+        except KeyError:      
             pass
         try:
             g.es['label'] = g.es['args']
@@ -441,15 +343,15 @@ class CAES(object):
         the relevant proof standards, given the beliefs of the audience.
         """
         
-        return self.proof_standard(proposition)
+        return self.meets_proof_standard(proposition)
                 
   
-    def proof_standard(self, proposition):
+    def meets_proof_standard(self, proposition):
         return False
 
 
 
-DOCTEST = 0
+DOCTEST = True
 
 def graph_test():
 
@@ -465,7 +367,7 @@ def graph_test():
     g.vs['label'] = g.vs['prop']
 
     g.add_edges([(2, 0), (2, 1)])
-    g.es['arg'] = ['arg1']
+    g.es['arg'] = ['arg1', 'arg2']
     g.es['label'] = g.es['arg']
     props = [p for p in g.vs['prop']]
     print(props)
