@@ -32,7 +32,8 @@ Added proposition 'kill' to graph
 >>> argset.add_argument(arg2, verbose=False)
 >>> argset.add_argument(arg3, verbose=False)
 >>> #argset.draw()
->>> argset.arguments_for(murder)
+>>> for a in argset.arguments_pro_and_con(murder): print(a)
+>>> for a in argset.arguments_pro_and_con(intent): print(a)
 
 >>> assumptions = {kill, witness1, witness2, unreliable2}
 >>> weights = {}
@@ -220,9 +221,9 @@ class ArgumentSet(object):
         g.add_edges(edges_to_arg + edges_from_arg)
         
         
-    def arguments_for(self, proposition):
+    def arguments_pro_and_con(self, proposition):
         """
-        Find the arguments for a proposition in an *ArgSet*.
+        Find the arguments for a proposition in an *ArgumentSet*.
         
         :param proposition: The proposition to be checked.
         :type proposition: :class:`PropLiteral`
