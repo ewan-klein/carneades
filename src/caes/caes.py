@@ -2,7 +2,9 @@
 Carneades model of argumentation
 ================================
 
-
+>>> a = PropLiteral('a')
+>>> argset = ArgumentSet()
+>>> v = argset.add_proposition(a)
 
 Using a CAES
 ++++++++++++
@@ -19,9 +21,9 @@ Using a CAES
 >>> ps = ProofStandard(default='scintilla')
 >>> #ps.set_standard(intent="beyond_reasonable_doubt")
 
->>> arg1 = Argument(murder, premises={kill, intent})
->>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
->>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2})
+>>> arg1 = Argument(murder, premises={kill, intent}, arg_id='arg1')
+>>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, arg_id='arg2')
+>>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2}, arg_id='arg3')
 
 >>> argset = ArgumentSet()
 >>> argset.add_argument(arg1)
@@ -35,13 +37,13 @@ Using a CAES
 [witness2], ~[unreliable2] => -intent
     
 >>> assumptions = {kill, witness1, witness2, unreliable2}
->>> weights = {arg1: 0.8, arg2: 0.3, arg3: 0.8}
+>>> weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
 >>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
 >>> caes.applicable(arg1)
 True
-
-
+>>> caes.argweight(arg1)
+0.8
 
 """
 
@@ -207,19 +209,25 @@ class ArgumentSet(object):
         """
         g = self.graph
         arg_id = 'arg{}'.format(self.arg_count)
-        argument.arg_id = arg_id
+        if argument.arg_id is None:
+            argument.arg_id = arg_id
+        else:
+            arg_id = argument.arg_id
         self.arg_count += 1
         self.arguments.append(argument)
         
+        # add new vertices to the graph
         self.graph.add_vertex(arg=arg_id)
-        v_arg = g.vs.select(arg=arg_id)[0]
+        arg_v = g.vs.select(arg=arg_id)[0]
         conclusions = [argument.conclusion, argument.conclusion.negate()]     
-        v_conclusions = [self.add_proposition(conc) for conc in conclusions]        
-        v_premises = [self.add_proposition(prop) for prop in sorted(argument.premises)]
-        v_exceptions = [self.add_proposition(prop) for prop in sorted(argument.exceptions)]
-        v_targets = v_premises + v_exceptions
-        edges_to_arg = [(v_conc.index, v_arg.index) for v_conc in v_conclusions]
-        edges_from_arg = [(v_arg.index, target.index) for target in v_targets]
+        conclusion_vs = [self.add_proposition(conc) for conc in conclusions]        
+        premise_vs = [self.add_proposition(prop) for prop in sorted(argument.premises)]
+        exception_vs = [self.add_proposition(prop) for prop in sorted(argument.exceptions)]
+        target_vs = premise_vs + exception_vs
+        
+        # add new vertices to the graph
+        edges_to_arg = [(conc_v.index, arg_v.index) for conc_v in conclusion_vs]
+        edges_from_arg = [(arg_v.index, target.index) for target in target_vs]
         g.add_edges(edges_to_arg + edges_from_arg)
         
         
@@ -288,7 +296,7 @@ class ProofStandard(object):
         return self.config[prop]
 
 
-Audience = namedtuple('Audience', ['assumptions', 'argweight'])
+Audience = namedtuple('Audience', ['assumptions', 'weight'])
 """
 An audience has assumptions about which premises hold and also
 assigns weights to arguments.
@@ -310,7 +318,7 @@ class CAES(object):
         """
         self.argset = argset
         self.assumptions = audience.assumptions
-        self.weights = audience.argweight
+        self.weight = audience.weight
         self.standard = proofstandard
         
     def applicable(self, argument):
@@ -361,6 +369,16 @@ class CAES(object):
             result = any(arguments)
             logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
             return result
+        
+        
+    def argweight(self, argument):
+        arg_id = argument.arg_id
+        try:
+            return self.weight[arg_id]            
+        except KeyError:
+            raise ValueError("No weight assigned to argument '{}'.".format(arg_id))
+        
+        
 
 
 
