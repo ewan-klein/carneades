@@ -17,7 +17,7 @@ Using a CAES
 >>> unreliable2 = PropLiteral('unreliable2')
 
 >>> ps = ProofStandard(default='scintilla')
->>> ps.set_standard(intent="beyond_reasonable_doubt")
+>>> #ps.set_standard(intent="beyond_reasonable_doubt")
 
 >>> arg1 = Argument(murder, premises={kill, intent})
 >>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
@@ -25,16 +25,15 @@ Using a CAES
 
 >>> argset = ArgumentSet()
 >>> argset.add_argument(arg1)
-Added proposition 'murder' to graph
-Added proposition '-murder' to graph
-Added proposition 'intent' to graph
-Added proposition 'kill' to graph
->>> argset.add_argument(arg2, verbose=False)
->>> argset.add_argument(arg3, verbose=False)
+>>> argset.add_argument(arg2)
+>>> argset.add_argument(arg3)
 >>> #argset.draw()
 >>> for a in argset.arguments_pro_and_con(murder): print(a)
+[intent, kill], ~[] => murder, 1.0
 >>> for a in argset.arguments_pro_and_con(intent): print(a)
-
+[witness1], ~[unreliable1] => intent, 1.0
+[witness2], ~[unreliable2] => -intent, 1.0
+    
 >>> assumptions = {kill, witness1, witness2, unreliable2}
 >>> weights = {}
 >>> audience = Audience(assumptions, weights)
@@ -46,8 +45,15 @@ Added proposition 'kill' to graph
 
 """
 
-from igraph import *
+
 from collections import namedtuple
+
+import logging
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+
+from igraph import *
+
+
 
 class PropLiteral(object):
     """
@@ -172,7 +178,7 @@ class ArgumentSet(object):
             pass
         return props
 
-    def add_proposition(self, prop, verbose=True):        
+    def add_proposition(self, prop):        
         """
         Add a proposition to a graph if it is not already present as a vertex.
         
@@ -184,19 +190,16 @@ class ArgumentSet(object):
         """
         if isinstance(prop, PropLiteral):
             if prop in self.propset():
-                if verbose:
-                    print("Proposition '{}' is already in graph".format(prop))                                           
+                logging.debug("Proposition '{}' is already in graph".format(prop))                     
             else:
-
                 self.graph.add_vertex(prop=prop)
-                if verbose:
-                    print("Added proposition '{}' to graph".format(prop))
+                logging.debug("Added proposition '{}' to graph".format(prop))
             return self.graph.vs.select(prop=prop)[0]                
                 
         else:
             raise TypeError('Input {} should be PropLiteral'.format(prop))
 
-    def add_argument(self, argument, verbose=True):
+    def add_argument(self, argument):
         """
         Add an argument to the graph.
         
@@ -212,9 +215,9 @@ class ArgumentSet(object):
         self.graph.add_vertex(arg=arg_id)
         v_arg = g.vs.select(arg=arg_id)[0]
         conclusions = [argument.conclusion, argument.conclusion.negate()]     
-        v_conclusions = [self.add_proposition(conc, verbose=verbose) for conc in conclusions]        
-        v_premises = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.premises)]
-        v_exceptions = [self.add_proposition(prop, verbose=verbose) for prop in sorted(argument.exceptions)]
+        v_conclusions = [self.add_proposition(conc) for conc in conclusions]        
+        v_premises = [self.add_proposition(prop) for prop in sorted(argument.premises)]
+        v_exceptions = [self.add_proposition(prop) for prop in sorted(argument.exceptions)]
         v_targets = v_premises + v_exceptions
         edges_to_arg = [(v_conc.index, v_arg.index) for v_conc in v_conclusions]
         edges_from_arg = [(v_arg.index, target.index) for target in v_targets]
@@ -330,7 +333,8 @@ class CAES(object):
         :type acceptability: LambdaType
         :rtype: bool
         """
-    
+        logging.debug('Current assumptions: {}'.format(self.assumptions))
+        logging.debug('Current premises: {}'.format(argument.premises))
         b1 = all(p in self.assumptions or \
                  (p.negate() not in self.assumptions and acceptability(p)) for p in argument.premises)
         
@@ -347,11 +351,14 @@ class CAES(object):
         the relevant proof standards, given the beliefs of the audience.
         """
         
-        return self.meets_proof_standard(proposition)
+        return self.meets_proof_standard(proposition, self.standard)
                 
   
-    def meets_proof_standard(self, proposition):
-        return False
+    def meets_proof_standard(self, proposition, standard):
+        arguments = self.argset.arguments_pro_and_con(proposition)
+        logging.debug("Using proof standard '{} for proposition'{}".format(standard, proposition))
+        if standard == 'scintilla':
+            return (any(arguments))
 
 
 
