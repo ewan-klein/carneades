@@ -29,17 +29,17 @@ Using a CAES
 >>> argset.add_argument(arg3)
 >>> #argset.draw()
 >>> for a in argset.arguments_pro_and_con(murder): print(a)
-[intent, kill], ~[] => murder, 1.0
+[intent, kill], ~[] => murder
 >>> for a in argset.arguments_pro_and_con(intent): print(a)
-[witness1], ~[unreliable1] => intent, 1.0
-[witness2], ~[unreliable2] => -intent, 1.0
+[witness1], ~[unreliable1] => intent
+[witness2], ~[unreliable2] => -intent
     
 >>> assumptions = {kill, witness1, witness2, unreliable2}
->>> weights = {}
+>>> weights = {arg1: 0.8, arg2: 0.3, arg3: 0.8}
 >>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
 >>> caes.applicable(arg1)
-
+True
 
 
 
@@ -118,7 +118,7 @@ class Argument(object):
     An argument consists of a conclusion, a set of premises and a set of
     exceptions (both of which can be empty).
     """
-    def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None, weight=1.0):
+    def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None):
         """        
         :param conclusion: The conclusion of the argument.
         :type conclusion: :class:`PropLiteral`
@@ -137,7 +137,6 @@ class Argument(object):
         self.premises = premises
         self.exceptions = exceptions
         self.arg_id = arg_id
-        self.weight = weight
 
 
 
@@ -150,7 +149,7 @@ class Argument(object):
             excepts = "[]"
         else:
             excepts = sorted(self.exceptions)
-        return "{}, ~{} => {}, {}".format(prems, excepts, self.conclusion, self.weight)
+        return "{}, ~{} => {}".format(prems, excepts, self.conclusion)
 
 
 class ArgumentSet(object):
@@ -178,7 +177,7 @@ class ArgumentSet(object):
             pass
         return props
 
-    def add_proposition(self, prop):        
+    def add_proposition(self, proposition):        
         """
         Add a proposition to a graph if it is not already present as a vertex.
         
@@ -188,16 +187,16 @@ class ArgumentSet(object):
         :rtype: :class:`PropLiteral`
         :raises TypeError: if the input is not a :class:`PropLiteral`.
         """
-        if isinstance(prop, PropLiteral):
-            if prop in self.propset():
-                logging.debug("Proposition '{}' is already in graph".format(prop))                     
+        if isinstance(proposition, PropLiteral):
+            if proposition in self.propset():
+                logging.debug("Proposition '{}' is already in graph".format(proposition))                     
             else:
-                self.graph.add_vertex(prop=prop)
-                logging.debug("Added proposition '{}' to graph".format(prop))
-            return self.graph.vs.select(prop=prop)[0]                
+                self.graph.add_vertex(prop=proposition)
+                logging.debug("Added proposition '{}' to graph".format(proposition))
+            return self.graph.vs.select(prop=proposition)[0]                
                 
         else:
-            raise TypeError('Input {} should be PropLiteral'.format(prop))
+            raise TypeError('Input {} should be PropLiteral'.format(proposition))
 
     def add_argument(self, argument):
         """
@@ -277,7 +276,7 @@ class ProofStandard(object):
                                 "clear_and_convincing", "beyond_reasonable_doubt",
                                 "dialectical_validity"]
         self.default = default
-        self.config = defaultdict(lambda x: self.default)
+        self.config = defaultdict(lambda: self.default)
 
     def set_standard(self, **propstandards):
         for v in propstandards.values():
@@ -350,15 +349,18 @@ class CAES(object):
         A conclusion is *acceptable* in a CAES if it can be arrived at under
         the relevant proof standards, given the beliefs of the audience.
         """
-        
-        return self.meets_proof_standard(proposition, self.standard)
+        standard = self.standard.assign_standard(proposition)
+        logging.debug("Checking whether proposition '{}' meets proof standard '{}'.".format(proposition, standard))
+        return self.meets_proof_standard(proposition, standard)
                 
   
     def meets_proof_standard(self, proposition, standard):
         arguments = self.argset.arguments_pro_and_con(proposition)
-        logging.debug("Using proof standard '{} for proposition'{}".format(standard, proposition))
+        
         if standard == 'scintilla':
-            return (any(arguments))
+            result = any(arguments)
+            logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
+            return result
 
 
 
