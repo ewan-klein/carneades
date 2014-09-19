@@ -19,7 +19,7 @@ Using a CAES
 >>> unreliable2 = PropLiteral('unreliable2')
 
 >>> ps = ProofStandard(default='scintilla')
->>> #ps.set_standard(intent="beyond_reasonable_doubt")
+>>> ps.set_standard(intent="beyond_reasonable_doubt")
 
 >>> arg1 = Argument(murder, premises={kill, intent}, arg_id='arg1')
 >>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, arg_id='arg2')
@@ -46,6 +46,7 @@ True
 0.3
 >>> caes.max_weight_applicable([arg1, arg2, arg3])
 0.8
+>>> caes.acceptable(intent)
 """
 
 
@@ -232,7 +233,7 @@ class ArgumentSet(object):
         g.add_edges(edges_to_arg + edges_from_arg)
         
         
-    def arguments_pro_and_con(self, proposition):
+    def arguments_for(self, proposition):
         """
         Find the arguments for a proposition in an *ArgumentSet*.
         
@@ -368,12 +369,14 @@ class CAES(object):
                 
   
     def meets_proof_standard(self, proposition, standard):
-        arguments = self.argset.arguments_pro_and_con(proposition)
+        arguments = self.argset.arguments_for(proposition)
         
         if standard == 'scintilla':
             result = any(arguments)
             logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
             return result
+        elif standard == 'preponderance':
+            return self.max_weight_pro(proposition) > self.max_weight_con(proposition)
         
         
     def weight_of(self, argument):
@@ -399,6 +402,14 @@ class CAES(object):
         weights = [self.weight_of(argument) for argument in applicable_args]
         logging.debug('Weights of {} are {}'.format(aaplic_arg_ids, weights))
         return max(weights)
+    
+    def max_weight_pro(self, proposition):
+        args = self.argset.arguments_for(proposition)
+        return self.max_weight_applicable(args)
+    
+    def max_weight_con(self, proposition):
+        args = self.argset.arguments_for(proposition.negate())
+        return self.max_weight_applicable(args)    
         
 
 
