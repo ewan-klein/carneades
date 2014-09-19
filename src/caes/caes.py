@@ -42,9 +42,10 @@ Using a CAES
 >>> caes = CAES(argset, audience, ps)
 >>> caes.applicable(arg1)
 True
->>> caes.argweight(arg1)
+>>> caes.weight_of(arg2)
+0.3
+>>> caes.max_weight_applicable([arg1, arg2, arg3])
 0.8
-
 """
 
 
@@ -340,13 +341,16 @@ class CAES(object):
         :type acceptability: LambdaType
         :rtype: bool
         """
+        logging.debug('Checking applicability of {}...'.format(argument.arg_id))
         logging.debug('Current assumptions: {}'.format(self.assumptions))
         logging.debug('Current premises: {}'.format(argument.premises))
         b1 = all(p in self.assumptions or \
                  (p.negate() not in self.assumptions and acceptability(p)) for p in argument.premises)
         
+        if argument.exceptions:
+            logging.debug('Current exception: {}'.format(argument.exceptions))
         b2 = all(e not in self.assumptions and \
-                 (e.negate() in self.assumptions or not sacceptability(p)) for e in argument.exceptions)
+                 (e.negate() in self.assumptions or not acceptability(e)) for e in argument.exceptions)
         
         return b1 and b2
        
@@ -357,6 +361,7 @@ class CAES(object):
         A conclusion is *acceptable* in a CAES if it can be arrived at under
         the relevant proof standards, given the beliefs of the audience.
         """
+        
         standard = self.standard.assign_standard(proposition)
         logging.debug("Checking whether proposition '{}' meets proof standard '{}'.".format(proposition, standard))
         return self.meets_proof_standard(proposition, standard)
@@ -371,7 +376,7 @@ class CAES(object):
             return result
         
         
-    def argweight(self, argument):
+    def weight_of(self, argument):
         arg_id = argument.arg_id
         try:
             return self.weight[arg_id]            
@@ -379,7 +384,22 @@ class CAES(object):
             raise ValueError("No weight assigned to argument '{}'.".format(arg_id))
         
         
-
+    def max_weight_applicable(self, arguments):
+        """
+        :parameter arguments: The arguments whose weight is being compared.
+        :type arguments: list(:class:`Argument`)
+        :return: The maximum of the weights of the arguments.
+        :rtype: int
+        """
+        arg_ids = [arg.arg_id for arg in arguments]
+        logging.debug('Checking applicability and weights of {}'.format(arg_ids))
+        applicable_args = [arg for arg in arguments if self.applicable(arg)]
+        aaplic_arg_ids = [arg.arg_id for arg in applicable_args]
+        logging.debug('Checking applicability and weights of {}'.format(aaplic_arg_ids))
+        weights = [self.weight_of(argument) for argument in applicable_args]
+        logging.debug('Weights of {} are {}'.format(aaplic_arg_ids, weights))
+        return max(weights)
+        
 
 
 DOCTEST = True
