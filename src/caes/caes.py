@@ -39,6 +39,15 @@ Using a CAES
 >>> weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
 >>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
+
+>>> caes.show_all_arguments()
+[intent, kill], ~[] => murder
+[witness1], ~[unreliable1] => intent
+[witness2], ~[unreliable2] => -intent
+
+>>> for arg in caes.argset.arguments_for(intent):
+...    print(arg)
+
 >>> caes.applicable(arg1)
 True
 >>> caes.weight_of(arg2)
@@ -52,11 +61,15 @@ True
 from collections import namedtuple
 
 import logging
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+
 
 from igraph import *
 
+LOGLEVEL = logging.DEBUG
+LOGLEVEL = logging.INFO
 
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=LOGLEVEL)
 
 class PropLiteral(object):
     """
@@ -242,26 +255,42 @@ class ArgumentSet(object):
         :rtype: list(:class:`Argument`)
         """
         g = self.graph
-        index_conc = g.vs.select(prop=proposition)[0].index
-        target_vs = [e.target for e in g.es.select(_source=index_conc)]
+        conc_v_index = g.vs.select(prop=proposition)[0].index
+        target_vs = [e.target for e in g.es.select(_source=conc_v_index)]
         out_v = [g.vs[i] for i in target_vs]
         args = [v['arg'] for v in out_v]
         return [arg for arg in self.arguments if arg.arg_id in args]
         
 
 
-    def draw(self):
+    def draw(self, debug=False):
         """
         Visualise an :class:`ArgumentSet` as a labeled graph.
+        
+        :parameter debug: If :class:`True`, add the vertex index to the label.
         """
         g = self.graph
+        
+        
+        # labels for nodes that are classed as propositions
         labels = g.vs['prop']
+        
+        # insert the labels for nodes that are classed as arguments
         for i in range(len(labels)):
             if g.vs['arg'][i] is not None:
                 labels[i] = g.vs['arg'][i]
+                                
+        if debug:
+            d_labels = []
+            for (i, label) in enumerate(labels):
+                d_labels.append("{}\nv{}".format(label, g.vs[i].index))
+                
+            labels = d_labels
+            
         g.vs['label'] = labels
-      
-        
+            
+        #g.vs['label'] = [v.index for v in g.vs]
+              
         roots = [i for i in range(len(g.vs)) if g.indegree()[i] == 0]
         layout = g.layout_reingold_tilford(mode=ALL, root=roots)
 
@@ -328,6 +357,10 @@ class CAES(object):
         self.beta = beta
         self.gamma = gamma
         
+    def show_all_arguments(self):
+        for arg in self.argset.arguments:
+            print(arg)
+        
         
     def applicable(self, argument):
         """
@@ -349,13 +382,13 @@ class CAES(object):
         :rtype: bool
         """
         logging.debug('Checking applicability of {}...'.format(argument.arg_id))
-        logging.debug('Current assumptions: {}'.format(self.assumptions))
-        logging.debug('Current premises: {}'.format(argument.premises))
+        logging.debug('    Current assumptions: {}'.format(self.assumptions))
+        logging.debug('    Current premises: {}'.format(argument.premises))
         b1 = all(p in self.assumptions or \
                  (p.negate() not in self.assumptions and acceptability(p)) for p in argument.premises)
         
         if argument.exceptions:
-            logging.debug('Current exception: {}'.format(argument.exceptions))
+            logging.debug('    Current exception: {}'.format(argument.exceptions))
         b2 = all(e not in self.assumptions and \
                  (e.negate() in self.assumptions or not acceptability(e)) for e in argument.exceptions)
         
@@ -385,13 +418,15 @@ class CAES(object):
         elif standard == 'clear_and_convincing':
             mwp = self.max_weight_pro(proposition)
             mwc = self.max_weight_con(proposition)
+            logging.debug("    {}: weight pro '{}' >  weight con '{}'?".format(proposition, mwp, mwc))
+            
             result = (mwp > mwc) and (mwp - mwc > self.gamma)            
         elif standard == 'beyond_reasonable_doubt':
             result = self.meets_proof_standard(proposition, 'clear_and_convincing')\
                 and self.max_weight_con(proposition) < self.gamma            
 
         
-        logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
+        logging.debug("    Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
         return result        
         
     def weight_of(self, argument):
@@ -428,7 +463,38 @@ class CAES(object):
         
 
 
-DOCTEST = True
+DOCTEST = 0
+
+def arg_test():
+    kill = PropLiteral('kill')
+    intent = PropLiteral('intent')
+    neg_intent = intent.negate()
+    murder = PropLiteral('murder')
+    witness1 = PropLiteral('witness1')
+    unreliable1 = PropLiteral('unreliable1')
+    witness2 = PropLiteral('witness2')
+    unreliable2 = PropLiteral('unreliable2')
+    
+    ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
+    
+    arg1 = Argument(murder, premises={kill, intent}, arg_id='arg1')
+    arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, arg_id='arg2')
+    arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2}, arg_id='arg3')
+    
+    argset = ArgumentSet()
+    argset.add_argument(arg1)
+    argset.add_argument(arg2)
+    argset.add_argument(arg3)
+    argset.draw(debug=True)
+
+    for arg in argset.arguments_for(intent): 
+        print(arg)
+
+        
+    assumptions = {kill, witness1, witness2, unreliable2}
+    weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
+    audience = Audience(assumptions, weights)
+    caes = CAES(argset, audience, ps)    
 
 def graph_test():
 
@@ -457,5 +523,5 @@ if __name__ == '__main__':
         import doctest
         doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
     else:
-        graph_test()
+        arg_test()
 
