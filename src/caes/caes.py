@@ -18,8 +18,7 @@ Using a CAES
 >>> witness2 = PropLiteral('witness2')
 >>> unreliable2 = PropLiteral('unreliable2')
 
->>> ps = ProofStandard(default='scintilla')
->>> ps.set_standard(intent="beyond_reasonable_doubt")
+>>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
 
 >>> arg1 = Argument(murder, premises={kill, intent}, arg_id='arg1')
 >>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, arg_id='arg2')
@@ -30,9 +29,9 @@ Using a CAES
 >>> argset.add_argument(arg2)
 >>> argset.add_argument(arg3)
 >>> #argset.draw()
->>> for a in argset.arguments_pro_and_con(murder): print(a)
+>>> for a in argset.arguments_for(murder): print(a)
 [intent, kill], ~[] => murder
->>> for a in argset.arguments_pro_and_con(intent): print(a)
+>>> for a in argset.arguments_for(intent): print(a)
 [witness1], ~[unreliable1] => intent
 [witness2], ~[unreliable2] => -intent
     
@@ -244,9 +243,9 @@ class ArgumentSet(object):
         """
         g = self.graph
         index_conc = g.vs.select(prop=proposition)[0].index
-        v_targets = [e.target for e in g.es.select(_source=index_conc)]
-        v_out = [g.vs[i] for i in v_targets]
-        args = [v['arg'] for v in v_out]
+        target_vs = [e.target for e in g.es.select(_source=index_conc)]
+        out_v = [g.vs[i] for i in target_vs]
+        args = [v['arg'] for v in out_v]
         return [arg for arg in self.arguments if arg.arg_id in args]
         
 
@@ -281,18 +280,20 @@ class ProofStandard(object):
     """
     Each proposition in a CAES is associated with a proof standard.
     """
-    def __init__(self, default='scintilla'):
+    def __init__(self, propstandards, default='scintilla'):
         self.proof_standards = ["scintilla", "preponderance",
                                 "clear_and_convincing", "beyond_reasonable_doubt",
                                 "dialectical_validity"]
         self.default = default
         self.config = defaultdict(lambda: self.default)
+        self._set_standard(propstandards)
 
-    def set_standard(self, **propstandards):
-        for v in propstandards.values():
-            if v not in self.proof_standards:
-                raise ValueError("{} is not a valid proof standard".format(v))
-        self.config.update(propstandards)
+    def _set_standard(self, propstandards):
+        for (prop, standard) in propstandards:
+            if standard not in self.proof_standards:
+                raise ValueError("{} is not a valid proof standard".format(standard))
+            self.config[prop] = standard
+
 
     def assign_standard(self, prop):
         return self.config[prop]
@@ -311,7 +312,8 @@ class CAES(object):
     A class that represents a Carneades Argument Evaluation Structure (CAES).
  
     """
-    def __init__(self, argset, audience, proofstandard):
+    def __init__(self, argset, audience, proofstandard, alpha=0.4, beta=0.3,
+                 gamma=0.2):
         """
         
         :type argset: :class:`ArgSet`
@@ -322,6 +324,10 @@ class CAES(object):
         self.assumptions = audience.assumptions
         self.weight = audience.weight
         self.standard = proofstandard
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
+        
         
     def applicable(self, argument):
         """
@@ -370,14 +376,23 @@ class CAES(object):
   
     def meets_proof_standard(self, proposition, standard):
         arguments = self.argset.arguments_for(proposition)
+        result = False
         
         if standard == 'scintilla':
-            result = any(arguments)
-            logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
-            return result
+            result = any(arguments)            
         elif standard == 'preponderance':
-            return self.max_weight_pro(proposition) > self.max_weight_con(proposition)
+            result = self.max_weight_pro(proposition) > self.max_weight_con(proposition)
+        elif standard == 'clear_and_convincing':
+            mwp = self.max_weight_pro(proposition)
+            mwc = self.max_weight_con(proposition)
+            result = (mwp > mwc) and (mwp - mwc > self.gamma)            
+        elif standard == 'beyond_reasonable_doubt':
+            result = self.meets_proof_standard(proposition, 'clear_and_convincing')\
+                and self.max_weight_con(proposition) < self.gamma            
+
         
+        logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
+        return result        
         
     def weight_of(self, argument):
         arg_id = argument.arg_id
@@ -397,10 +412,10 @@ class CAES(object):
         arg_ids = [arg.arg_id for arg in arguments]
         logging.debug('Checking applicability and weights of {}'.format(arg_ids))
         applicable_args = [arg for arg in arguments if self.applicable(arg)]
-        aaplic_arg_ids = [arg.arg_id for arg in applicable_args]
-        logging.debug('Checking applicability and weights of {}'.format(aaplic_arg_ids))
+        applic_arg_ids = [arg.arg_id for arg in applicable_args]
+        logging.debug('Checking applicability and weights of {}'.format(applic_arg_ids))
         weights = [self.weight_of(argument) for argument in applicable_args]
-        logging.debug('Weights of {} are {}'.format(aaplic_arg_ids, weights))
+        logging.debug('Weights of {} are {}'.format(applic_arg_ids, weights))
         return max(weights)
     
     def max_weight_pro(self, proposition):
