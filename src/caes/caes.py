@@ -29,32 +29,42 @@ Using a CAES
 >>> argset.add_argument(arg2)
 >>> argset.add_argument(arg3)
 >>> #argset.draw()
->>> for a in argset.arguments_for(murder): print(a)
-[intent, kill], ~[] => murder
->>> for a in argset.arguments_for(intent): print(a)
-[witness1], ~[unreliable1] => intent
-[witness2], ~[unreliable2] => -intent
     
 >>> assumptions = {kill, witness1, witness2, unreliable2}
 >>> weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
 >>> audience = Audience(assumptions, weights)
 >>> caes = CAES(argset, audience, ps)
 
->>> caes.show_all_arguments()
+>>> caes.get_all_arguments()
 [intent, kill], ~[] => murder
 [witness1], ~[unreliable1] => intent
 [witness2], ~[unreliable2] => -intent
 
->>> for arg in caes.argset.arguments_for(intent):
-...    print(arg)
-
->>> caes.applicable(arg1)
+>>> len(argset.get_arguments(intent))
+1
+>>> arg_for_intent = argset.get_arguments(intent)[0]
+>>> print(arg_for_intent)
+[witness1], ~[unreliable1] => intent
+>>> caes.applicable(arg_for_intent)
 True
->>> caes.weight_of(arg2)
-0.3
->>> caes.max_weight_applicable([arg1, arg2, arg3])
-0.8
->>> caes.acceptable(intent)
+
+>>> len(argset.get_arguments(neg_intent))
+1
+>>> arg_for_neg_intent = argset.get_arguments(neg_intent)[0]
+>>> print(arg_for_neg_intent)
+[witness2], ~[unreliable2] => -intent
+
+This argument is not applicable, since `unreliable2` is an exception:
+
+>>> caes.applicable(arg_for_neg_intent)
+False
+
+
+
+>>> caes.weight_of(arg2) > caes.alpha
+False
+
+>>> caes.acceptable(murder)
 """
 
 
@@ -230,22 +240,33 @@ class ArgumentSet(object):
         self.arg_count += 1
         self.arguments.append(argument)
         
-        # add new vertices to the graph
+        # add an argument vertex to the graph
         self.graph.add_vertex(arg=arg_id)
         arg_v = g.vs.select(arg=arg_id)[0]
-        conclusions = [argument.conclusion, argument.conclusion.negate()]     
-        conclusion_vs = [self.add_proposition(conc) for conc in conclusions]        
+        
+        #conclusions = [argument.conclusion, argument.conclusion.negate()]     
+        #conclusion_vs = [self.add_proposition(conc) for conc in conclusions]        
+        #premise_vs = [self.add_proposition(prop) for prop in sorted(argument.premises)]
+        #exception_vs = [self.add_proposition(prop) for prop in sorted(argument.exceptions)]
+        #target_vs = premise_vs + exception_vs
+        
+        ## add new vertices to the graph
+        #edges_to_arg = [(conc_v.index, arg_v.index) for conc_v in conclusion_vs]
+        #edges_from_arg = [(arg_v.index, target.index) for target in target_vs]
+        #g.add_edges(edges_to_arg + edges_from_arg)
+            
+        conclusion_v = self.add_proposition(argument.conclusion)     
         premise_vs = [self.add_proposition(prop) for prop in sorted(argument.premises)]
         exception_vs = [self.add_proposition(prop) for prop in sorted(argument.exceptions)]
         target_vs = premise_vs + exception_vs
         
         # add new vertices to the graph
-        edges_to_arg = [(conc_v.index, arg_v.index) for conc_v in conclusion_vs]
+        edge_to_arg = [(conclusion_v.index, arg_v.index)]
         edges_from_arg = [(arg_v.index, target.index) for target in target_vs]
-        g.add_edges(edges_to_arg + edges_from_arg)
+        g.add_edges(edge_to_arg + edges_from_arg)
         
         
-    def arguments_for(self, proposition):
+    def get_arguments(self, proposition):
         """
         Find the arguments for a proposition in an *ArgumentSet*.
         
@@ -255,15 +276,23 @@ class ArgumentSet(object):
         :rtype: list(:class:`Argument`)
         """
         g = self.graph
+        
+        # index of vertex associated with the proposition
         conc_v_index = g.vs.select(prop=proposition)[0].index
-        target_vs = [e.target for e in g.es.select(_source=conc_v_index)]
-        out_v = [g.vs[i] for i in target_vs]
-        args = [v['arg'] for v in out_v]
-        return [arg for arg in self.arguments if arg.arg_id in args]
+        
+        # IDs of vertices reachable in one hop from the proposition's vertex
+        target_IDs = [e.target for e in g.es.select(_source=conc_v_index)]
+        
+        # the vertices indexed by target_IDs
+        out_vs = [g.vs[i] for i in target_IDs]
+        
+        arg_IDs = [v['arg'] for v in out_vs]
+        args = [arg for arg in self.arguments if arg.arg_id in arg_IDs]
+        return args
         
 
 
-    def draw(self, debug=False):
+    def draw(self, debug=False, roots=None):
         """
         Visualise an :class:`ArgumentSet` as a labeled graph.
         
@@ -289,9 +318,9 @@ class ArgumentSet(object):
             
         g.vs['label'] = labels
             
-        #g.vs['label'] = [v.index for v in g.vs]
-              
-        roots = [i for i in range(len(g.vs)) if g.indegree()[i] == 0]
+        if roots is None:     
+            roots = [i for i in range(len(g.vs)) if g.indegree()[i] == 0]
+            
         layout = g.layout_reingold_tilford(mode=ALL, root=roots)
 
         plot_style = {}
@@ -357,7 +386,8 @@ class CAES(object):
         self.beta = beta
         self.gamma = gamma
         
-    def show_all_arguments(self):
+
+    def get_all_arguments(self):
         for arg in self.argset.arguments:
             print(arg)
         
@@ -408,7 +438,7 @@ class CAES(object):
                 
   
     def meets_proof_standard(self, proposition, standard):
-        arguments = self.argset.arguments_for(proposition)
+        arguments = self.argset.get_arguments(proposition)
         result = False
         
         if standard == 'scintilla':
@@ -447,6 +477,10 @@ class CAES(object):
         arg_ids = [arg.arg_id for arg in arguments]
         logging.debug('Checking applicability and weights of {}'.format(arg_ids))
         applicable_args = [arg for arg in arguments if self.applicable(arg)]
+        if len(applicable_args) == 0:
+            logging.debug('No applicable arguments in {}'.format(arg_ids))
+            return 0
+        
         applic_arg_ids = [arg.arg_id for arg in applicable_args]
         logging.debug('Checking applicability and weights of {}'.format(applic_arg_ids))
         weights = [self.weight_of(argument) for argument in applicable_args]
@@ -454,11 +488,11 @@ class CAES(object):
         return max(weights)
     
     def max_weight_pro(self, proposition):
-        args = self.argset.arguments_for(proposition)
+        args = self.argset.get_arguments(proposition)
         return self.max_weight_applicable(args)
     
     def max_weight_con(self, proposition):
-        args = self.argset.arguments_for(proposition.negate())
+        args = self.argset.get_arguments(proposition.negate())
         return self.max_weight_applicable(args)    
         
 
@@ -487,14 +521,15 @@ def arg_test():
     argset.add_argument(arg3)
     argset.draw(debug=True)
 
-    for arg in argset.arguments_for(intent): 
-        print(arg)
+    #for arg in argset.get_arguments(intent): 
+        #print(arg)
 
         
     assumptions = {kill, witness1, witness2, unreliable2}
     weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
     audience = Audience(assumptions, weights)
     caes = CAES(argset, audience, ps)    
+    caes.acceptable(murder)
 
 def graph_test():
 
