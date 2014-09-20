@@ -69,14 +69,12 @@ False
 
 
 from collections import namedtuple
-
 import logging
-
-
 from igraph import *
+from tracecalls import TraceCalls
 
 LOGLEVEL = logging.DEBUG
-LOGLEVEL = logging.INFO
+#LOGLEVEL = logging.INFO
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=LOGLEVEL)
@@ -391,7 +389,7 @@ class CAES(object):
         for arg in self.argset.arguments:
             print(arg)
         
-        
+    @TraceCalls()    
     def applicable(self, argument):
         """
         An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.
@@ -400,32 +398,32 @@ class CAES(object):
         :type argument: :class:`Argument`
         :rtype: bool
         """
-        acceptability = lambda p: self.acceptable(p)        
-        return self._applicable(argument, acceptability)
+        _acceptable = lambda p: self.acceptable(p)        
+        return self._applicable(argument, _acceptable)
                                   
-    def _applicable(self, argument, acceptability):
+    def _applicable(self, argument, _acceptable):
         """       
         :parameter argument: The argument whose applicablility is being determined.
         :type argument: :class:`Argument`
-        :parameter acceptability: The function which determines the acceptability of a proposition in the CAES.
-        :type acceptability: LambdaType
+        :parameter _acceptable: The function which determines the acceptability of a proposition in the CAES.
+        :type _acceptable: LambdaType
         :rtype: bool
         """
         logging.debug('Checking applicability of {}...'.format(argument.arg_id))
-        logging.debug('    Current assumptions: {}'.format(self.assumptions))
-        logging.debug('    Current premises: {}'.format(argument.premises))
+        logging.debug('Current assumptions: {}'.format(self.assumptions))
+        logging.debug('Current premises: {}'.format(argument.premises))
         b1 = all(p in self.assumptions or \
-                 (p.negate() not in self.assumptions and acceptability(p)) for p in argument.premises)
+                 (p.negate() not in self.assumptions and _acceptable(p)) for p in argument.premises)
         
         if argument.exceptions:
-            logging.debug('    Current exception: {}'.format(argument.exceptions))
+            logging.debug('Current exception: {}'.format(argument.exceptions))
         b2 = all(e not in self.assumptions and \
-                 (e.negate() in self.assumptions or not acceptability(e)) for e in argument.exceptions)
+                 (e.negate() in self.assumptions or not _acceptable(e)) for e in argument.exceptions)
         
         return b1 and b2
        
                 
-    
+    @TraceCalls()
     def acceptable(self, proposition):
         """
         A conclusion is *acceptable* in a CAES if it can be arrived at under
@@ -436,13 +434,14 @@ class CAES(object):
         logging.debug("Checking whether proposition '{}' meets proof standard '{}'.".format(proposition, standard))
         return self.meets_proof_standard(proposition, standard)
                 
-  
+    @TraceCalls()
     def meets_proof_standard(self, proposition, standard):
         arguments = self.argset.get_arguments(proposition)
+
         result = False
         
         if standard == 'scintilla':
-            result = any(arguments)            
+            result = any(arg for arg in arguments if self.applicable(arg))            
         elif standard == 'preponderance':
             result = self.max_weight_pro(proposition) > self.max_weight_con(proposition)
         elif standard == 'clear_and_convincing':
@@ -450,13 +449,13 @@ class CAES(object):
             mwc = self.max_weight_con(proposition)
             logging.debug("    {}: weight pro '{}' >  weight con '{}'?".format(proposition, mwp, mwc))
             
-            result = (mwp > mwc) and (mwp - mwc > self.gamma)            
+            result = (mwp > self.alpha) and (mwp - mwc > self.gamma)            
         elif standard == 'beyond_reasonable_doubt':
             result = self.meets_proof_standard(proposition, 'clear_and_convincing')\
                 and self.max_weight_con(proposition) < self.gamma            
 
         
-        logging.debug("    Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
+        #logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
         return result        
         
     def weight_of(self, argument):
@@ -519,7 +518,7 @@ def arg_test():
     argset.add_argument(arg1)
     argset.add_argument(arg2)
     argset.add_argument(arg3)
-    argset.draw(debug=True)
+    #argset.draw(debug=True)
 
     #for arg in argset.get_arguments(intent): 
         #print(arg)
