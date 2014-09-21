@@ -1,0 +1,30 @@
+caes package
+============
+
+
+caes.caes module
+----------------
+
+.. automodule:: caes.caes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :special-members: __init__
+
+
+caes.tracecalls module
+----------------------
+
+.. automodule:: caes.tracecalls
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: caes
+    :members:
+    :undoc-members:
+    :show-inheritance:
