@@ -11,39 +11,86 @@ Carneades model of argumentation
 ================================
 
 
-Using a CAES
-++++++++++++
+
+First, let's create some propositions using the :class:`PropLiteral`
+constructor. All propositions are atomic, that is, either positive or negative literals.
 
 >>> kill = PropLiteral('kill')
+>>> kill.polarity
+True
 >>> intent = PropLiteral('intent')
->>> neg_intent = intent.negate()
 >>> murder = PropLiteral('murder')
 >>> witness1 = PropLiteral('witness1')
 >>> unreliable1 = PropLiteral('unreliable1')
 >>> witness2 = PropLiteral('witness2')
 >>> unreliable2 = PropLiteral('unreliable2')
 
->>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")])
+The :method:`negate` method allows us to introduce negated propositions.
 
->>> arg1 = Argument(murder, premises={kill, intent}, arg_id='arg1')
->>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, arg_id='arg2')
->>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2}, arg_id='arg3')
+>>> neg_intent = intent.negate()
+>>> print(neg_intent)
+-intent
+>>> neg_intent.polarity
+False
+>>> neg_intent == intent
+False
+>>> neg_intent.negate() == intent
+True
+
+Arguments are built with the :class:`Argument` constructor. They are required
+to have a conclusion, and may also have premises and exceptions.
+
+>>> arg1 = Argument(murder, premises={kill, intent})
+>>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
+>>> arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2})
+>>> print(arg1)
+[intent, kill], ~[] => murder
+
+In order to organise the dependencies between the conclusion of an argument
+and its premises and exceptions, we model them using a directed graph called
+an :class:`ArgumentSet`. Notice that the premise of one argument (e.g., the
+``intent`` premise of ``arg1``) can be the conclusion of another argument (i.e.,
+``arg2``)).
 
 >>> argset = ArgumentSet()
 >>> argset.add_argument(arg1)
 >>> argset.add_argument(arg2)
 >>> argset.add_argument(arg3)
->>> #argset.draw()
+
+There is a :func:`draw` method which allows us to view the resulting graph.
+
+>>> argset.draw()
+
+In evaluating the relative value of arguments for a particular conclusion
+``p``, we need to determine what standard of *proof* is required to establish
+``p``. The :class:`ProofStandard` constructor is initialised with a list of
+``(proposition, name-of-proof-standard)`` pairs. The default proof standard,
+viz., ``'scintilla'``, is the weakest level.
+
+>>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
+
+We model a Carneades Argument Evaluation Structure (CAES) as an instance of
+the :class:`CAES` class. The role of the audience (or jury) is modeled as an
+:class:`Audience`, consisting of a set of assumed propositions, and an assignment 
+of weights to arguments.
 
 >>> assumptions = {kill, witness1, witness2, unreliable2}
 >>> weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
 >>> audience = Audience(assumptions, weights)
->>> caes = CAES(argset, audience, ps)
 
+Once an audience has been defined, we can use it to initialise a
+:class:`CAES`, together with instances of :class:`ArgumentSet` and
+:class:`ProofStandard`:
+
+
+>>> caes = CAES(argset, audience, ps)
 >>> caes.get_all_arguments()
 [intent, kill], ~[] => murder
 [witness1], ~[unreliable1] => intent
 [witness2], ~[unreliable2] => -intent
+
+The :method:`get_arguments` method returns the list of arguments in an 
+:class:`ArgumentSet` which support a given proposition.
 
 >>> arg_for_intent = argset.get_arguments(intent)[0]
 >>> print(arg_for_intent)
@@ -72,10 +119,10 @@ False
 from collections import namedtuple
 import logging
 from igraph import *
-from tracecalls import TraceCalls
+from caes.tracecalls import TraceCalls
 
-LOGLEVEL = logging.DEBUG
-#LOGLEVEL = logging.INFO
+#LOGLEVEL = logging.DEBUG
+LOGLEVEL = logging.INFO
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=LOGLEVEL)
