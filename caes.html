@@ -209,7 +209,7 @@ constructor. All propositions are atomic, that is, either positive or negative l
 <span class="gp">&gt;&gt;&gt; </span><span class="n">unreliable2</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;unreliable2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <a href="#id1"><span class="problematic" id="id2">:method:`negate`</span></a> method allows us to introduce negated propositions.</p>
+<p>The <tt class="xref py py-class docutils literal"><span class="pre">negate</span></tt> method allows us to introduce negated propositions.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">neg_intent</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">)</span>
 <span class="go">-intent</span>
@@ -226,6 +226,8 @@ to have a conclusion, and may also have premises and exceptions.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arg1</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">murder</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">intent</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arg2</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness1</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arg3</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness2</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable2</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
+<span class="go">[intent, kill], ~[] =&gt; murder</span>
 </pre></div>
 </div>
 <p>In order to organise the dependencies between the conclusion of an argument
@@ -246,22 +248,32 @@ an <a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.
 <p>In evaluating the relative value of arguments for a particular conclusion
 <tt class="docutils literal"><span class="pre">p</span></tt>, we need to determine what standard of <em>proof</em> is required to establish
 <tt class="docutils literal"><span class="pre">p</span></tt>. The <a class="reference internal" href="#caes.caes.ProofStandard" title="caes.caes.ProofStandard"><tt class="xref py py-class docutils literal"><span class="pre">ProofStandard</span></tt></a> constructor is initialised with a list of
-<tt class="docutils literal"><span class="pre">(proposition,</span> <span class="pre">name-of-proof-standard)</span></tt> pairs:</p>
+<tt class="docutils literal"><span class="pre">(proposition,</span> <span class="pre">name-of-proof-standard)</span></tt> pairs. The default proof standard,
+viz., <tt class="docutils literal"><span class="pre">'scintilla'</span></tt>, is the weakest level.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span> <span class="o">=</span> <span class="n">ProofStandard</span><span class="p">([(</span><span class="n">intent</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">)],</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>We model a Carneades Argument Evaluation Structure (CAES) as an instance of
+the <a class="reference internal" href="#caes.caes.CAES" title="caes.caes.CAES"><tt class="xref py py-class docutils literal"><span class="pre">CAES</span></tt></a> class. The role of the audience (or jury) is modeled as an
+<a class="reference internal" href="#caes.caes.Audience" title="caes.caes.Audience"><tt class="xref py py-class docutils literal"><span class="pre">Audience</span></tt></a>, consisting of a set of assumed propositions, and an assignment 
+of weights to arguments.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">assumptions</span> <span class="o">=</span> <span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">witness1</span><span class="p">,</span> <span class="n">witness2</span><span class="p">,</span> <span class="n">unreliable2</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;arg1&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;arg2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s">&#39;arg3&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">audience</span> <span class="o">=</span> <span class="n">Audience</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span> <span class="o">=</span> <span class="n">CAES</span><span class="p">(</span><span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">get_all_arguments</span><span class="p">()</span>
+<p>Once an audience has been defined, we can use it to initialise a
+<a class="reference internal" href="#caes.caes.CAES" title="caes.caes.CAES"><tt class="xref py py-class docutils literal"><span class="pre">CAES</span></tt></a>, together with instances of <a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> and
+<a class="reference internal" href="#caes.caes.ProofStandard" title="caes.caes.ProofStandard"><tt class="xref py py-class docutils literal"><span class="pre">ProofStandard</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span> <span class="o">=</span> <span class="n">CAES</span><span class="p">(</span><span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">get_all_arguments</span><span class="p">()</span>
 <span class="go">[intent, kill], ~[] =&gt; murder</span>
 <span class="go">[witness1], ~[unreliable1] =&gt; intent</span>
 <span class="go">[witness2], ~[unreliable2] =&gt; -intent</span>
 </pre></div>
 </div>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">get_arguments()</span></tt> method returns the list of arguments in an 
+<a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> which support a given proposition.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arg_for_intent</span> <span class="o">=</span> <span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">intent</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">arg_for_intent</span><span class="p">)</span>
 <span class="go">[witness1], ~[unreliable1] =&gt; intent</span>
@@ -270,7 +282,7 @@ an <a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.
 </pre></div>
 </div>
 <p>Although there is an argument (arg3) for &#8216;-intent&#8217;, it is not applicable,
-since <cite>unreliable2</cite> is an exception:</p>
+since <tt class="xref py py-obj docutils literal"><span class="pre">unreliable2</span></tt> is an exception:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">any</span><span class="p">(</span><span class="n">caes</span><span class="o">.</span><span class="n">applicable</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">))</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">)</span>

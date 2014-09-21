@@ -176,7 +176,7 @@
 <span class="sd">&gt;&gt;&gt; witness2 = PropLiteral(&#39;witness2&#39;)</span>
 <span class="sd">&gt;&gt;&gt; unreliable2 = PropLiteral(&#39;unreliable2&#39;)</span>
 
-<span class="sd">The :method:`negate` method allows us to introduce negated propositions.</span>
+<span class="sd">The :class:`negate` method allows us to introduce negated propositions.</span>
 
 <span class="sd">&gt;&gt;&gt; neg_intent = intent.negate()</span>
 <span class="sd">&gt;&gt;&gt; print(neg_intent)</span>
@@ -194,6 +194,8 @@
 <span class="sd">&gt;&gt;&gt; arg1 = Argument(murder, premises={kill, intent})</span>
 <span class="sd">&gt;&gt;&gt; arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})</span>
 <span class="sd">&gt;&gt;&gt; arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2})</span>
+<span class="sd">&gt;&gt;&gt; print(arg1)</span>
+<span class="sd">[intent, kill], ~[] =&gt; murder</span>
 
 <span class="sd">In order to organise the dependencies between the conclusion of an argument</span>
 <span class="sd">and its premises and exceptions, we model them using a directed graph called</span>
@@ -213,19 +215,33 @@
 <span class="sd">In evaluating the relative value of arguments for a particular conclusion</span>
 <span class="sd">``p``, we need to determine what standard of *proof* is required to establish</span>
 <span class="sd">``p``. The :class:`ProofStandard` constructor is initialised with a list of</span>
-<span class="sd">``(proposition, name-of-proof-standard)`` pairs:</span>
+<span class="sd">``(proposition, name-of-proof-standard)`` pairs. The default proof standard,</span>
+<span class="sd">viz., ``&#39;scintilla&#39;``, is the weakest level.</span>
 
 <span class="sd">&gt;&gt;&gt; ps = ProofStandard([(intent, &quot;beyond_reasonable_doubt&quot;)], default=&#39;scintilla&#39;)</span>
+
+<span class="sd">We model a Carneades Argument Evaluation Structure (CAES) as an instance of</span>
+<span class="sd">the :class:`CAES` class. The role of the audience (or jury) is modeled as an</span>
+<span class="sd">:class:`Audience`, consisting of a set of assumed propositions, and an assignment </span>
+<span class="sd">of weights to arguments.</span>
 
 <span class="sd">&gt;&gt;&gt; assumptions = {kill, witness1, witness2, unreliable2}</span>
 <span class="sd">&gt;&gt;&gt; weights = {&#39;arg1&#39;: 0.8, &#39;arg2&#39;: 0.3, &#39;arg3&#39;: 0.8}</span>
 <span class="sd">&gt;&gt;&gt; audience = Audience(assumptions, weights)</span>
-<span class="sd">&gt;&gt;&gt; caes = CAES(argset, audience, ps)</span>
 
+<span class="sd">Once an audience has been defined, we can use it to initialise a</span>
+<span class="sd">:class:`CAES`, together with instances of :class:`ArgumentSet` and</span>
+<span class="sd">:class:`ProofStandard`:</span>
+
+
+<span class="sd">&gt;&gt;&gt; caes = CAES(argset, audience, ps)</span>
 <span class="sd">&gt;&gt;&gt; caes.get_all_arguments()</span>
 <span class="sd">[intent, kill], ~[] =&gt; murder</span>
 <span class="sd">[witness1], ~[unreliable1] =&gt; intent</span>
 <span class="sd">[witness2], ~[unreliable2] =&gt; -intent</span>
+
+<span class="sd">The :meth:`get_arguments` method returns the list of arguments in an </span>
+<span class="sd">:class:`ArgumentSet` which support a given proposition.</span>
 
 <span class="sd">&gt;&gt;&gt; arg_for_intent = argset.get_arguments(intent)[0]</span>
 <span class="sd">&gt;&gt;&gt; print(arg_for_intent)</span>
