@@ -1,26 +1,25 @@
 # Author: Eli Bendersky <eliben@gmail.com>
+#         Ewan Klein <ewan@inf.ed.ac.uk> (modifications)
 # 
 # See http://eli.thegreenplace.net/2012/08/22/easy-tracing-of-nested-function-calls-in-python
 
 
 import sys
-import logging
 from functools import wraps
+import logging
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 class TraceCalls(object):
-    """ Use as a decorator on functions that should be traced. Several
-        functions can be decorated - they will all be indented according
-        to their call depth.
+    """ 
+    Use as a decorator on functions that should be traced. Several functions
+    can be decorated - they will all be indented according to their call
+    depth.
+        
     """
     def __init__(self, indent_step=2, show_ret=True):
         self.indent_step = indent_step
         self.show_ret = show_ret
-
-        # This is a class attribute since we want to share the indentation
-        # level between different traced functions, in case they call
-        # each other.
         TraceCalls.cur_indent = 0
 
     def __call__(self, fn):

@@ -1,3 +1,4 @@
+"""
 Propositions
 ------------
 
@@ -45,8 +46,8 @@ Arguments
 
 Construct some arguments.
 
->>> arg1 = Argument(a, premises={negb}, weight=0.3)
->>> arg2 = Argument(negb, premises={e}, weight=0.6)
+>>> arg1 = Argument(a, premises={negb})
+>>> arg2 = Argument(negb, premises={e})
 >>> arg3 = Argument(negb, premises={g})
 
 >>> h = PropLiteral('h')
@@ -56,10 +57,10 @@ Construct some arguments.
 >>> args = [arg1, arg2, arg3, arg4]
 >>> for arg in args:
 ...     print(arg)
-[-b], ~[] => a, 0.3
-[e], ~[] => -b, 0.6
-[e], ~[] => -b, 1.0
-[-i, h], ~[-b] => a, 1.0
+[-b], ~[] => a
+[e], ~[] => -b
+[e], ~[] => -b
+[-i, h], ~[-b] => a
 
 
 Argument set
@@ -67,16 +68,13 @@ Argument set
 
 >>> argset = ArgumentSet()
 >>> v0 = argset.add_proposition(a)
-Added proposition 'a' to graph
 >>> argset.propset()
 {a}
 >>> v1 = argset.add_proposition(negb)
-Added proposition '-b' to graph
 >>> argset.propset() == {a, negb}
 True
->>> v0 = argset.add_proposition(a)
-Proposition 'a' is already in graph
-
+>>> v3 = argset.add_proposition(a)
+DEBUG: Proposition 'a' is already in graph
 
 >>> kill = PropLiteral('kill')
 >>> intent = PropLiteral('intent')
@@ -111,7 +109,7 @@ Applicable Arguments in a CAES
 >>> assumptions1 = {a}
 >>> arg1 = Argument(c, premises={a, b})
 >>> argset = ArgumentSet()
->>> weights = {}
+>>> weights = {arg1: 0.8, arg2: 0.3, arg3: 0.8}
 >>> audience = Audience(assumptions1, weights)
 >>> caes = CAES(argset, audience, ps)
 
@@ -140,3 +138,9 @@ Vacuously true if there are no premises
 >>> caes = CAES(argset, audience, ps)
 >>> caes._applicable(arg2, acceptability)
 True
+"""
+
+if __name__ == '__main__':
+        
+        import doctest
+        doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)

@@ -10,9 +10,6 @@
 Carneades model of argumentation
 ================================
 
->>> a = PropLiteral('a')
->>> argset = ArgumentSet()
->>> v = argset.add_proposition(a)
 
 Using a CAES
 ++++++++++++
@@ -26,7 +23,7 @@ Using a CAES
 >>> witness2 = PropLiteral('witness2')
 >>> unreliable2 = PropLiteral('unreliable2')
 
->>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
+>>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")])
 
 >>> arg1 = Argument(murder, premises={kill, intent}, arg_id='arg1')
 >>> arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, arg_id='arg2')
