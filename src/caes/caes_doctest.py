@@ -74,7 +74,6 @@ Argument set
 >>> argset.propset() == {a, negb}
 True
 >>> v3 = argset.add_proposition(a)
-DEBUG: Proposition 'a' is already in graph
 
 >>> kill = PropLiteral('kill')
 >>> intent = PropLiteral('intent')
@@ -89,9 +88,9 @@ DEBUG: Proposition 'a' is already in graph
 Proof standard
 --------------
 
->>> ps = ProofStandard()
->>> d = {intent: "beyond_reasonable_doubt"}
->>> ps.set_standard(intent="beyond_reasonable_doubt")
+
+>>> standards = [(intent, "beyond_reasonable_doubt")]
+>>> ps = ProofStandard(standards)
 
 CAES
 ----
@@ -140,7 +139,6 @@ Vacuously true if there are no premises
 True
 """
 
-if __name__ == '__main__':
-        
-        import doctest
-        doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
+if __name__ == '__main__':       
+    import doctest
+    doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
