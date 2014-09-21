@@ -103,12 +103,8 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">caes package</a><ul>
-<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a><ul>
-<li><a class="reference internal" href="#carneades-model-of-argumentation">Carneades model of argumentation</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a></li>
 <li><a class="reference internal" href="#module-caes.tracecalls">caes.tracecalls module</a></li>
-<li><a class="reference internal" href="#module-caes">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -148,12 +144,8 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">caes package</a><ul>
-<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a><ul>
-<li><a class="reference internal" href="#carneades-model-of-argumentation">Carneades model of argumentation</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a></li>
 <li><a class="reference internal" href="#module-caes.tracecalls">caes.tracecalls module</a></li>
-<li><a class="reference internal" href="#module-caes">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -194,8 +186,6 @@
 <h1>caes package<a class="headerlink" href="#caes-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-caes.caes">
 <span id="caes-caes-module"></span><h2>caes.caes module<a class="headerlink" href="#module-caes.caes" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="carneades-model-of-argumentation">
-<h3>Carneades model of argumentation<a class="headerlink" href="#carneades-model-of-argumentation" title="Permalink to this headline">¶</a></h3>
 <p>First, let&#8217;s create some propositions using the <a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>
 constructor. All propositions are atomic, that is, either positive or negative literals.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">kill</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;kill&#39;</span><span class="p">)</span>
@@ -209,7 +199,7 @@ constructor. All propositions are atomic, that is, either positive or negative l
 <span class="gp">&gt;&gt;&gt; </span><span class="n">unreliable2</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;unreliable2&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <tt class="xref py py-class docutils literal"><span class="pre">negate</span></tt> method allows us to introduce negated propositions.</p>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">negate()</span></tt> method allows us to introduce negated propositions.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">neg_intent</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">)</span>
 <span class="go">-intent</span>
@@ -302,8 +292,7 @@ since <tt class="xref py py-obj docutils literal"><span class="pre">unreliable2<
 <dl class="class">
 <dt id="caes.caes.Argument">
 <em class="property">class </em><tt class="descname">Argument</tt><big>(</big><em>conclusion</em>, <em>premises=set()</em>, <em>exceptions=set()</em>, <em>arg_id=None</em><big>)</big><a class="reference internal" href="_modules/caes/caes.html#Argument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.Argument" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
-<p>An argument consists of a conclusion, a set of premises and a set of
+<dd><p>An argument consists of a conclusion, a set of premises and a set of
 exceptions (both of which can be empty).</p>
 <dl class="method">
 <dt id="caes.caes.Argument.__init__">
@@ -330,8 +319,7 @@ exceptions (both of which can be empty).</p>
 <dl class="class">
 <dt id="caes.caes.ArgumentSet">
 <em class="property">class </em><tt class="descname">ArgumentSet</tt><a class="reference internal" href="_modules/caes/caes.html#ArgumentSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ArgumentSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
-<p>An <tt class="docutils literal"><span class="pre">ArgumentSet</span></tt> is modeled as a dependency graph where vertices represent
+<dd><p>An <tt class="docutils literal"><span class="pre">ArgumentSet</span></tt> is modeled as a dependency graph where vertices represent
 the components of an argument. A vertex corresponding to the conclusion
 of an argument <em>A</em> will depend on the premises and exceptions in <em>A</em>.</p>
 <dl class="method">
@@ -418,8 +406,7 @@ the graph.</p>
 <dl class="class">
 <dt id="caes.caes.Audience">
 <em class="property">class </em><tt class="descname">Audience</tt><a class="headerlink" href="#caes.caes.Audience" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.tuple</span></tt></p>
-<p>An audience has assumptions about which premises hold and also
+<dd><p>An audience has assumptions about which premises hold and also
 assigns weights to arguments.</p>
 <dl class="attribute">
 <dt id="caes.caes.Audience.assumptions">
@@ -438,8 +425,7 @@ assigns weights to arguments.</p>
 <dl class="class">
 <dt id="caes.caes.CAES">
 <em class="property">class </em><tt class="descname">CAES</tt><big>(</big><em>argset</em>, <em>audience</em>, <em>proofstandard</em>, <em>alpha=0.4</em>, <em>beta=0.3</em>, <em>gamma=0.2</em><big>)</big><a class="reference internal" href="_modules/caes/caes.html#CAES"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.CAES" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
-<p>A class that represents a Carneades Argument Evaluation Structure (CAES).</p>
+<dd><p>A class that represents a Carneades Argument Evaluation Structure (CAES).</p>
 <dl class="method">
 <dt id="caes.caes.CAES.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>argset</em>, <em>audience</em>, <em>proofstandard</em>, <em>alpha=0.4</em>, <em>beta=0.3</em>, <em>gamma=0.2</em><big>)</big><a class="reference internal" href="_modules/caes/caes.html#CAES.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.CAES.__init__" title="Permalink to this definition">¶</a></dt>
@@ -521,8 +507,7 @@ the relevant proof standards, given the beliefs of the audience.</p>
 <dl class="class">
 <dt id="caes.caes.ProofStandard">
 <em class="property">class </em><tt class="descname">ProofStandard</tt><big>(</big><em>propstandards</em>, <em>default='scintilla'</em><big>)</big><a class="reference internal" href="_modules/caes/caes.html#ProofStandard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ProofStandard" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
-<p>Each proposition in a CAES is associated with a proof standard.</p>
+<dd><p>Each proposition in a CAES is associated with a proof standard.</p>
 <dl class="method">
 <dt id="caes.caes.ProofStandard.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>propstandards</em>, <em>default='scintilla'</em><big>)</big><a class="reference internal" href="_modules/caes/caes.html#ProofStandard.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ProofStandard.__init__" title="Permalink to this definition">¶</a></dt>
@@ -538,8 +523,7 @@ the relevant proof standards, given the beliefs of the audience.</p>
 <dl class="class">
 <dt id="caes.caes.PropLiteral">
 <em class="property">class </em><tt class="descname">PropLiteral</tt><big>(</big><em>string</em>, <em>polarity=True</em><big>)</big><a class="reference internal" href="_modules/caes/caes.html#PropLiteral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.PropLiteral" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
-<p>Proposition literals have most of the properties of ordinary strings,
+<dd><p>Proposition literals have most of the properties of ordinary strings,
 except that the negation method is Boolean; i.e.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span> <span class="o">==</span> <span class="n">a</span>
@@ -572,7 +556,6 @@ except that the negation method is Boolean; i.e.</p>
 <dd></dd></dl>
 
 </div>
-</div>
 <div class="section" id="module-caes.tracecalls">
 <span id="caes-tracecalls-module"></span><h2>caes.tracecalls module<a class="headerlink" href="#module-caes.tracecalls" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -589,9 +572,6 @@ depth.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-caes">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-caes" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

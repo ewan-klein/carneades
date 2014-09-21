@@ -158,11 +158,6 @@
 <span class="c"># For license information, see LICENSE.TXT</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Carneades model of argumentation</span>
-<span class="sd">================================</span>
-
-
-
 <span class="sd">First, let&#39;s create some propositions using the :class:`PropLiteral`</span>
 <span class="sd">constructor. All propositions are atomic, that is, either positive or negative literals.</span>
 
@@ -176,7 +171,7 @@
 <span class="sd">&gt;&gt;&gt; witness2 = PropLiteral(&#39;witness2&#39;)</span>
 <span class="sd">&gt;&gt;&gt; unreliable2 = PropLiteral(&#39;unreliable2&#39;)</span>
 
-<span class="sd">The :class:`negate` method allows us to introduce negated propositions.</span>
+<span class="sd">The :meth:`negate` method allows us to introduce negated propositions.</span>
 
 <span class="sd">&gt;&gt;&gt; neg_intent = intent.negate()</span>
 <span class="sd">&gt;&gt;&gt; print(neg_intent)</span>
