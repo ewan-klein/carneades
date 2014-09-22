@@ -7,6 +7,13 @@
 # For license information, see LICENSE.TXT
 
 """
+==========
+ Overview
+==========
+
+Propositions
+============
+
 First, let's create some propositions using the :class:`PropLiteral`
 constructor. All propositions are atomic, that is, either positive or negative literals.
 
@@ -32,6 +39,9 @@ False
 >>> neg_intent.negate() == intent
 True
 
+Arguments
+=========
+
 Arguments are built with the :class:`Argument` constructor. They are required
 to have a conclusion, and may also have premises and exceptions.
 
@@ -54,7 +64,10 @@ an :class:`ArgumentSet`. Notice that the premise of one argument (e.g., the
 
 There is a :func:`draw` method which allows us to view the resulting graph.
 
->>> argset.draw()
+>>> argset.draw() # doctest: +SKIP
+
+Proof Standards
+===============
 
 In evaluating the relative value of arguments for a particular conclusion
 ``p``, we need to determine what standard of *proof* is required to establish
@@ -62,7 +75,7 @@ In evaluating the relative value of arguments for a particular conclusion
 system. Instead, it tries to capture how substantial the arguments are
 in favour of, or against, a particular conclusion.
 
- The :class:`ProofStandard` constructor is initialised with a list of
+The :class:`ProofStandard` constructor is initialised with a list of
 ``(proposition, name-of-proof-standard)`` pairs. The default proof standard,
 viz., ``'scintilla'``, is the weakest level.  Different
 propositions can be assigned different proof standards that they need
@@ -70,13 +83,16 @@ to attain.
 
 >>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
 
+Carneades Argument Evaluation Structure
+=======================================
+
 The core of the argumentation model is a data structure plus set of
 rules for evaluating arguments; this is called a Carneades Argument
 Evaluation Structure (CAES). A CAES consists of a set of arguments,
 an audience (or jury), and a method for determining whether propositions
 satisfy the relevant proof standards. 
 
-The role of the audienceis modeled as an :class:`Audience`, consisting
+The role of the audience is modeled as an :class:`Audience`, consisting
 of a set of assumed propositions, and an assignment of weights to
 arguments.
 
@@ -133,13 +149,16 @@ the conclusion `murder` is not acceptable, since
 False
 >>> caes.acceptable(murder.negate())
 False
+
+
+
 """
 
 
 from collections import namedtuple
 import logging
 from igraph import *
-from tracecalls import TraceCalls
+from caes.tracecalls import TraceCalls
 
 #LOGLEVEL = logging.DEBUG
 LOGLEVEL = logging.INFO
