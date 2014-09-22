@@ -161,8 +161,9 @@ import logging
 from igraph import *
 from tracecalls import TraceCalls
 
-#LOGLEVEL = logging.DEBUG
-LOGLEVEL = logging.INFO
+LOGLEVEL = logging.DEBUG
+# Uncomment the following line to turn off debug messages
+#LOGLEVEL = logging.INFO
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=LOGLEVEL)
@@ -641,6 +642,7 @@ def graph_test():
     plot(g, layout=layout, vertex_label_size=16, vertex_size=8, vertex_label_dist=-5, margin=30)
 
 if __name__ == '__main__':
+
     if DOCTEST:
         import doctest
         doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
