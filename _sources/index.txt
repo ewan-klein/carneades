@@ -15,7 +15,8 @@ representing dependencies between arguments. For documentation, see
   <http://igraph.org/python/doc/igraph-module.html>`_
 
 Plotting in ``igraph`` is dependent on the ``pycairo`` library which provides Python
-bindings to the `Cairo library <http://www.cairographics.org`_. 
+bindings to the `Cairo library <http://www.cairographics.org>`_, as
+illustrated below.
 
 .. image:: argset.png
    :width: 500 px
