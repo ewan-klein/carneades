@@ -7,11 +7,6 @@
 # For license information, see LICENSE.TXT
 
 """
-Carneades model of argumentation
-================================
-
-
-
 First, let's create some propositions using the :class:`PropLiteral`
 constructor. All propositions are atomic, that is, either positive or negative literals.
 
@@ -25,7 +20,7 @@ True
 >>> witness2 = PropLiteral('witness2')
 >>> unreliable2 = PropLiteral('unreliable2')
 
-The :method:`negate` method allows us to introduce negated propositions.
+The :meth:`negate` method allows us to introduce negated propositions.
 
 >>> neg_intent = intent.negate()
 >>> print(neg_intent)
@@ -89,7 +84,7 @@ Once an audience has been defined, we can use it to initialise a
 [witness1], ~[unreliable1] => intent
 [witness2], ~[unreliable2] => -intent
 
-The :method:`get_arguments` method returns the list of arguments in an 
+The :meth:`get_arguments` method returns the list of arguments in an 
 :class:`ArgumentSet` which support a given proposition.
 
 >>> arg_for_intent = argset.get_arguments(intent)[0]
