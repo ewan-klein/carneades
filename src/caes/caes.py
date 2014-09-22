@@ -65,6 +65,7 @@ an :class:`ArgumentSet`. Notice that the premise of one argument (e.g., the
 There is a :func:`draw` method which allows us to view the resulting graph.
 
 >>> argset.draw() # doctest: +SKIP
+>>> argset.draw(fname='argset.svg') 
 
 Proof Standards
 ===============
@@ -230,7 +231,7 @@ class Argument(object):
     """
     An argument consists of a conclusion, a set of premises and a set of
     exceptions (both of which can be empty).
-    
+
     Although arguments should have identifiers (`arg_id`), it is preferable to specify
     these when calling the :meth:`add_argument` method of :class:`ArgumentSet`.
     """
@@ -353,33 +354,32 @@ class ArgumentSet(object):
 
         # index of vertex associated with the proposition
         vs = g.vs.select(prop=proposition)
-        
+
         try:
             conc_v_index = vs[0].index
             # IDs of vertices reachable in one hop from the proposition's vertex
             target_IDs = [e.target for e in g.es.select(_source=conc_v_index)]
-    
+
             # the vertices indexed by target_IDs
             out_vs = [g.vs[i] for i in target_IDs]
-    
+
             arg_IDs = [v['arg'] for v in out_vs]
             args = [arg for arg in self.arguments if arg.arg_id in arg_IDs]
             return args            
         except IndexError:
             raise ValueError("Proposition '{}' is not in the current graph".format(proposition))
 
-        
 
 
 
-    def draw(self, debug=False, roots=None):
+
+    def draw(self, debug=False, roots=None, fname=None):
         """
         Visualise an :class:`ArgumentSet` as a labeled graph.
 
         :parameter debug: If :class:`True`, add the vertex index to the label.
         """
         g = self.graph
-
 
         # labels for nodes that are classed as propositions
         labels = g.vs['prop']
@@ -410,7 +410,17 @@ class ArgumentSet(object):
         plot_style['margin'] = 40
         plot_style['layout'] = layout
 
-        plot(g, **plot_style)
+        if fname is not None:
+            
+            g.write_svg(fname, **plot_style)        
+        else:
+            
+            plot(g, **plot_style)
+
+
+
+
+
 
 
 
@@ -561,7 +571,7 @@ class CAES(object):
         :rtype: int
         """
         arg_ids = [arg.arg_id for arg in arguments]
-      
+
         applicable_args = [arg for arg in arguments if self.applicable(arg)]
         if len(applicable_args) == 0:
             logging.debug('No applicable arguments in {}'.format(arg_ids))
