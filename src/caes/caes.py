@@ -58,16 +58,27 @@ There is a :func:`draw` method which allows us to view the resulting graph.
 
 In evaluating the relative value of arguments for a particular conclusion
 ``p``, we need to determine what standard of *proof* is required to establish
-``p``. The :class:`ProofStandard` constructor is initialised with a list of
+``p``. The notion of proof used here is not formal proof in a logical
+system. Instead, it tries to capture how substantial the arguments are
+in favour of, or against, a particular conclusion.
+
+ The :class:`ProofStandard` constructor is initialised with a list of
 ``(proposition, name-of-proof-standard)`` pairs. The default proof standard,
-viz., ``'scintilla'``, is the weakest level.
+viz., ``'scintilla'``, is the weakest level.  Different
+propositions can be assigned different proof standards that they need
+to attain.
 
 >>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
 
-We model a Carneades Argument Evaluation Structure (CAES) as an instance of
-the :class:`CAES` class. The role of the audience (or jury) is modeled as an
-:class:`Audience`, consisting of a set of assumed propositions, and an assignment 
-of weights to arguments.
+The core of the argumentation model is a data structure plus set of
+rules for evaluating arguments; this is called a Carneades Argument
+Evaluation Structure (CAES). A CAES consists of a set of arguments,
+an audience (or jury), and a method for determining whether propositions
+satisfy the relevant proof standards. 
+
+The role of the audienceis modeled as an :class:`Audience`, consisting
+of a set of assumed propositions, and an assignment of weights to
+arguments.
 
 >>> assumptions = {kill, witness1, witness2, unreliable2}
 >>> weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
@@ -76,7 +87,6 @@ of weights to arguments.
 Once an audience has been defined, we can use it to initialise a
 :class:`CAES`, together with instances of :class:`ArgumentSet` and
 :class:`ProofStandard`:
-
 
 >>> caes = CAES(argset, audience, ps)
 >>> caes.get_all_arguments()
@@ -87,22 +97,37 @@ Once an audience has been defined, we can use it to initialise a
 The :meth:`get_arguments` method returns the list of arguments in an 
 :class:`ArgumentSet` which support a given proposition.
 
+A proposition is said to be *acceptable* in a CAES if it meets its
+required proof standard. The process of checking whether a proposition
+meets its proof standard requires another notion: namely, whether the
+arguments that support it are *applicable*. An argument ``arg`` is applicable
+if and only if all its premises either belong to the audience's assumptions or are
+acceptable; moreover, the exceptions of ``arg`` must not belong to the
+assumptions or be acceptable. For example, `arg2`, which supports the
+conclusion `intent`, is acceptable since `witness1` is an assumption,
+while the exception `unreliable1` is neither an assumption nor acceptable.
+
 >>> arg_for_intent = argset.get_arguments(intent)[0]
 >>> print(arg_for_intent)
 [witness1], ~[unreliable1] => intent
 >>> caes.applicable(arg_for_intent)
 True
 
-Although there is an argument (arg3) for '-intent', it is not applicable,
-since `unreliable2` is an exception:
+>>> caes.acceptable(intent)
+
+Although there is an argument (``arg3``) for `-intent`, it is not applicable,
+since the exception `unreliable2` does belong to the audience's assumptions.
 
 >>> any(caes.applicable(arg) for arg in argset.get_arguments(neg_intent))
 False
+
+This in turn has the consequence that `-intent` is not acceptable.
+
 >>> caes.acceptable(neg_intent)
 False
 
->>> caes.weight_of(arg2) > caes.alpha
-False
+Despite the fact that the argument `arg2` for `murder` is applicable,
+the conclusion `murder` is not acceptable, since  
 
 >>> caes.acceptable(murder)
 False
@@ -114,7 +139,7 @@ False
 from collections import namedtuple
 import logging
 from igraph import *
-from caes.tracecalls import TraceCalls
+from tracecalls import TraceCalls
 
 #LOGLEVEL = logging.DEBUG
 LOGLEVEL = logging.INFO
@@ -310,17 +335,23 @@ class ArgumentSet(object):
         g = self.graph
 
         # index of vertex associated with the proposition
-        conc_v_index = g.vs.select(prop=proposition)[0].index
+        vs = g.vs.select(prop=proposition)
+        
+        try:
+            conc_v_index = vs[0].index
+            # IDs of vertices reachable in one hop from the proposition's vertex
+            target_IDs = [e.target for e in g.es.select(_source=conc_v_index)]
+    
+            # the vertices indexed by target_IDs
+            out_vs = [g.vs[i] for i in target_IDs]
+    
+            arg_IDs = [v['arg'] for v in out_vs]
+            args = [arg for arg in self.arguments if arg.arg_id in arg_IDs]
+            return args            
+        except IndexError:
+            raise ValueError("Proposition '{}' is not in the current graph".format(proposition))
 
-        # IDs of vertices reachable in one hop from the proposition's vertex
-        target_IDs = [e.target for e in g.es.select(_source=conc_v_index)]
-
-        # the vertices indexed by target_IDs
-        out_vs = [g.vs[i] for i in target_IDs]
-
-        arg_IDs = [v['arg'] for v in out_vs]
-        args = [arg for arg in self.arguments if arg.arg_id in arg_IDs]
-        return args
+        
 
 
 

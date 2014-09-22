@@ -11,7 +11,10 @@ The main module ``caes.py`` uses the ``igraph`` package for
 representing dependencies between arguments. For documentation, see
 
 * `igraph tutorial <http://igraph.org/python/doc/tutorial/>`_
-* `igraph manual and API <http://igraph.org/python/doc/igraph-module.html>`_
+* `igraph manual and API
+  <http://igraph.org/python/doc/igraph-module.html>`_
+
+.. image:: argset.png
 
 
 .. toctree::
