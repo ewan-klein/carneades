@@ -99,7 +99,16 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">caes package</a><ul>
-<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a></li>
+<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#propositions">Propositions</a></li>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#proof-standards">Proof Standards</a></li>
+<li><a class="reference internal" href="#carneades-argument-evaluation-structure">Carneades Argument Evaluation Structure</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-caes.tracecalls">caes.tracecalls module</a></li>
 </ul>
 </li>
@@ -137,7 +146,16 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">caes package</a><ul>
-<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a></li>
+<li><a class="reference internal" href="#module-caes.caes">caes.caes module</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#propositions">Propositions</a></li>
+<li><a class="reference internal" href="#arguments">Arguments</a></li>
+<li><a class="reference internal" href="#proof-standards">Proof Standards</a></li>
+<li><a class="reference internal" href="#carneades-argument-evaluation-structure">Carneades Argument Evaluation Structure</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-caes.tracecalls">caes.tracecalls module</a></li>
 </ul>
 </li>
@@ -176,7 +194,11 @@
 <h1>caes package<a class="headerlink" href="#caes-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-caes.caes">
 <span id="caes-caes-module"></span><h2>caes.caes module<a class="headerlink" href="#module-caes.caes" title="Permalink to this headline">¶</a></h2>
-<p>First, let&#8217;s create some propositions using the <a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="propositions">
+<h4>Propositions<a class="headerlink" href="#propositions" title="Permalink to this headline">¶</a></h4>
+<p>First, let&#8217;s create some propositions using the <a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>
 constructor. All propositions are atomic, that is, either positive or negative literals.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">kill</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;kill&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kill</span><span class="o">.</span><span class="n">polarity</span>
@@ -201,7 +223,10 @@ constructor. All propositions are atomic, that is, either positive or negative l
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>Arguments are built with the <a class="reference internal" href="#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a> constructor. They are required
+</div>
+<div class="section" id="arguments">
+<h4>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h4>
+<p>Arguments are built with the <a class="reference internal" href="index.html#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a> constructor. They are required
 to have a conclusion, and may also have premises and exceptions.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arg1</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">murder</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">intent</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arg2</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness1</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable1</span><span class="p">})</span>
@@ -212,39 +237,56 @@ to have a conclusion, and may also have premises and exceptions.</p>
 </div>
 <p>In order to organise the dependencies between the conclusion of an argument
 and its premises and exceptions, we model them using a directed graph called
-an <a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a>. Notice that the premise of one argument (e.g., the
+an <a class="reference internal" href="index.html#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a>. Notice that the premise of one argument (e.g., the
 <tt class="docutils literal"><span class="pre">intent</span></tt> premise of <tt class="docutils literal"><span class="pre">arg1</span></tt>) can be the conclusion of another argument (i.e.,
 <tt class="docutils literal"><span class="pre">arg2</span></tt>)).</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span> <span class="o">=</span> <span class="n">ArgumentSet</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg2</span><span class="p">,</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg3</span><span class="p">,</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg3&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>There is a <tt class="xref py py-func docutils literal"><span class="pre">draw()</span></tt> method which allows us to view the resulting graph.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="s">&#39;argset.svg&#39;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">argset</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="proof-standards">
+<h4>Proof Standards<a class="headerlink" href="#proof-standards" title="Permalink to this headline">¶</a></h4>
 <p>In evaluating the relative value of arguments for a particular conclusion
 <tt class="docutils literal"><span class="pre">p</span></tt>, we need to determine what standard of <em>proof</em> is required to establish
-<tt class="docutils literal"><span class="pre">p</span></tt>. The <a class="reference internal" href="#caes.caes.ProofStandard" title="caes.caes.ProofStandard"><tt class="xref py py-class docutils literal"><span class="pre">ProofStandard</span></tt></a> constructor is initialised with a list of
+<tt class="docutils literal"><span class="pre">p</span></tt>. The notion of proof used here is not formal proof in a logical
+system. Instead, it tries to capture how substantial the arguments are
+in favour of, or against, a particular conclusion.</p>
+<p>The <a class="reference internal" href="index.html#caes.caes.ProofStandard" title="caes.caes.ProofStandard"><tt class="xref py py-class docutils literal"><span class="pre">ProofStandard</span></tt></a> constructor is initialised with a list of
 <tt class="docutils literal"><span class="pre">(proposition,</span> <span class="pre">name-of-proof-standard)</span></tt> pairs. The default proof standard,
-viz., <tt class="docutils literal"><span class="pre">'scintilla'</span></tt>, is the weakest level.</p>
+viz., <tt class="docutils literal"><span class="pre">'scintilla'</span></tt>, is the weakest level.  Different
+propositions can be assigned different proof standards that they need
+to attain.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span> <span class="o">=</span> <span class="n">ProofStandard</span><span class="p">([(</span><span class="n">intent</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">)],</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We model a Carneades Argument Evaluation Structure (CAES) as an instance of
-the <a class="reference internal" href="#caes.caes.CAES" title="caes.caes.CAES"><tt class="xref py py-class docutils literal"><span class="pre">CAES</span></tt></a> class. The role of the audience (or jury) is modeled as an
-<a class="reference internal" href="#caes.caes.Audience" title="caes.caes.Audience"><tt class="xref py py-class docutils literal"><span class="pre">Audience</span></tt></a>, consisting of a set of assumed propositions, and an assignment 
-of weights to arguments.</p>
+</div>
+<div class="section" id="carneades-argument-evaluation-structure">
+<h4>Carneades Argument Evaluation Structure<a class="headerlink" href="#carneades-argument-evaluation-structure" title="Permalink to this headline">¶</a></h4>
+<p>The core of the argumentation model is a data structure plus set of
+rules for evaluating arguments; this is called a Carneades Argument
+Evaluation Structure (CAES). A CAES consists of a set of arguments,
+an audience (or jury), and a method for determining whether propositions
+satisfy the relevant proof standards.</p>
+<p>The role of the audience is modeled as an <a class="reference internal" href="index.html#caes.caes.Audience" title="caes.caes.Audience"><tt class="xref py py-class docutils literal"><span class="pre">Audience</span></tt></a>, consisting
+of a set of assumed propositions, and an assignment of weights to
+arguments.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">assumptions</span> <span class="o">=</span> <span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">witness1</span><span class="p">,</span> <span class="n">witness2</span><span class="p">,</span> <span class="n">unreliable2</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;arg1&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;arg2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s">&#39;arg3&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">audience</span> <span class="o">=</span> <span class="n">Audience</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Once an audience has been defined, we can use it to initialise a
-<a class="reference internal" href="#caes.caes.CAES" title="caes.caes.CAES"><tt class="xref py py-class docutils literal"><span class="pre">CAES</span></tt></a>, together with instances of <a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> and
-<a class="reference internal" href="#caes.caes.ProofStandard" title="caes.caes.ProofStandard"><tt class="xref py py-class docutils literal"><span class="pre">ProofStandard</span></tt></a>:</p>
+<a class="reference internal" href="index.html#caes.caes.CAES" title="caes.caes.CAES"><tt class="xref py py-class docutils literal"><span class="pre">CAES</span></tt></a>, together with instances of <a class="reference internal" href="index.html#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> and
+<a class="reference internal" href="index.html#caes.caes.ProofStandard" title="caes.caes.ProofStandard"><tt class="xref py py-class docutils literal"><span class="pre">ProofStandard</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span> <span class="o">=</span> <span class="n">CAES</span><span class="p">(</span><span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">get_all_arguments</span><span class="p">()</span>
 <span class="go">[intent, kill], ~[] =&gt; murder</span>
@@ -253,7 +295,16 @@ of weights to arguments.</p>
 </pre></div>
 </div>
 <p>The <tt class="xref py py-meth docutils literal"><span class="pre">get_arguments()</span></tt> method returns the list of arguments in an 
-<a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> which support a given proposition.</p>
+<a class="reference internal" href="index.html#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> which support a given proposition.</p>
+<p>A proposition is said to be <em>acceptable</em> in a CAES if it meets its
+required proof standard. The process of checking whether a proposition
+meets its proof standard requires another notion: namely, whether the
+arguments that support it are <em>applicable</em>. An argument <tt class="docutils literal"><span class="pre">arg</span></tt> is applicable
+if and only if all its premises either belong to the audience&#8217;s assumptions or are
+acceptable; moreover, the exceptions of <tt class="docutils literal"><span class="pre">arg</span></tt> must not belong to the
+assumptions or be acceptable. For example, <tt class="xref py py-obj docutils literal"><span class="pre">arg2</span></tt>, which supports the
+conclusion <tt class="xref py py-obj docutils literal"><span class="pre">intent</span></tt>, is acceptable since <tt class="xref py py-obj docutils literal"><span class="pre">witness1</span></tt> is an assumption,
+while the exception <tt class="xref py py-obj docutils literal"><span class="pre">unreliable1</span></tt> is neither an assumption nor acceptable.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arg_for_intent</span> <span class="o">=</span> <span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">intent</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">arg_for_intent</span><span class="p">)</span>
 <span class="go">[witness1], ~[unreliable1] =&gt; intent</span>
@@ -261,18 +312,23 @@ of weights to arguments.</p>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>Although there is an argument (arg3) for &#8216;-intent&#8217;, it is not applicable,
-since <tt class="xref py py-obj docutils literal"><span class="pre">unreliable2</span></tt> is an exception:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">intent</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Although there is an argument (<tt class="docutils literal"><span class="pre">arg3</span></tt>) for <tt class="xref py py-obj docutils literal"><span class="pre">-intent</span></tt>, it is not applicable,
+since the exception <tt class="xref py py-obj docutils literal"><span class="pre">unreliable2</span></tt> does belong to the audience&#8217;s assumptions.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">any</span><span class="p">(</span><span class="n">caes</span><span class="o">.</span><span class="n">applicable</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">))</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This in turn has the consequence that <tt class="xref py py-obj docutils literal"><span class="pre">-intent</span></tt> is not acceptable.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">weight_of</span><span class="p">(</span><span class="n">arg2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">caes</span><span class="o">.</span><span class="n">alpha</span>
-<span class="go">False</span>
-</pre></div>
-</div>
+<p>Despite the fact that the argument <tt class="xref py py-obj docutils literal"><span class="pre">arg2</span></tt> for <tt class="xref py py-obj docutils literal"><span class="pre">murder</span></tt> is applicable,
+the conclusion <tt class="xref py py-obj docutils literal"><span class="pre">murder</span></tt> is not acceptable, since</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">murder</span><span class="p">)</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">murder</span><span class="o">.</span><span class="n">negate</span><span class="p">())</span>
@@ -281,22 +337,22 @@ since <tt class="xref py py-obj docutils literal"><span class="pre">unreliable2<
 </div>
 <dl class="class">
 <dt id="caes.caes.Argument">
-<em class="property">class </em><tt class="descname">Argument</tt><big>(</big><em>conclusion</em>, <em>premises=set()</em>, <em>exceptions=set()</em>, <em>arg_id=None</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#Argument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.Argument" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descname">Argument</tt><big>(</big><em>conclusion</em>, <em>premises=set()</em>, <em>exceptions=set()</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#Argument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.Argument" title="Permalink to this definition">¶</a></dt>
 <dd><p>An argument consists of a conclusion, a set of premises and a set of
 exceptions (both of which can be empty).</p>
+<p>Although arguments should have identifiers (<tt class="xref py py-obj docutils literal"><span class="pre">arg_id</span></tt>), it is preferable to specify
+these when calling the <tt class="xref py py-meth docutils literal"><span class="pre">add_argument()</span></tt> method of <a class="reference internal" href="index.html#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a>.</p>
 <dl class="method">
 <dt id="caes.caes.Argument.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>conclusion</em>, <em>premises=set()</em>, <em>exceptions=set()</em>, <em>arg_id=None</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#Argument.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.Argument.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>conclusion</em>, <em>premises=set()</em>, <em>exceptions=set()</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#Argument.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.Argument.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>conclusion</strong> (<a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>) &#8211; The conclusion of the argument.</li>
-<li><strong>premises</strong> (set(<a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>)) &#8211; The premises of the argument.</li>
-<li><strong>exceptions</strong> (set(<a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>)) &#8211; The exceptions of the argument</li>
-<li><strong>arg_id</strong> (<em>None or str</em>) &#8211; The exceptions of the argument</li>
-<li><strong>weight</strong> &#8211; The exceptions of the argument</li>
+<li><strong>conclusion</strong> (<a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>) &#8211; The conclusion of the argument.</li>
+<li><strong>premises</strong> (set(<a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>)) &#8211; The premises of the argument.</li>
+<li><strong>exceptions</strong> (set(<a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>)) &#8211; The exceptions of the argument</li>
 </ul>
 </td>
 </tr>
@@ -319,13 +375,13 @@ of an argument <em>A</em> will depend on the premises and exceptions in <em>A</e
 
 <dl class="method">
 <dt id="caes.caes.ArgumentSet.add_argument">
-<tt class="descname">add_argument</tt><big>(</big><em>argument</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#ArgumentSet.add_argument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ArgumentSet.add_argument" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">add_argument</tt><big>(</big><em>argument</em>, <em>arg_id=None</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#ArgumentSet.add_argument"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ArgumentSet.add_argument" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an argument to the graph.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argument</strong> (<a class="reference internal" href="#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>) &#8211; The argument to be added to the graph.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argument</strong> (<a class="reference internal" href="index.html#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>) &#8211; The argument to be added to the graph.</td>
 </tr>
 </tbody>
 </table>
@@ -339,14 +395,14 @@ of an argument <em>A</em> will depend on the premises and exceptions in <em>A</e
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prop</strong> (<a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>) &#8211; The proposition to be added to the graph.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prop</strong> (<a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>) &#8211; The proposition to be added to the graph.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The graph vertex corresponding to the proposition.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a></td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Raises TypeError:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if the input is not a <a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>.</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">if the input is not a <a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -354,8 +410,8 @@ of an argument <em>A</em> will depend on the premises and exceptions in <em>A</e
 
 <dl class="method">
 <dt id="caes.caes.ArgumentSet.draw">
-<tt class="descname">draw</tt><big>(</big><em>debug=False</em>, <em>roots=None</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#ArgumentSet.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ArgumentSet.draw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Visualise an <a class="reference internal" href="#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> as a labeled graph.</p>
+<tt class="descname">draw</tt><big>(</big><em>debug=False</em>, <em>roots=None</em>, <em>fname=None</em><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#ArgumentSet.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ArgumentSet.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualise an <a class="reference internal" href="index.html#caes.caes.ArgumentSet" title="caes.caes.ArgumentSet"><tt class="xref py py-class docutils literal"><span class="pre">ArgumentSet</span></tt></a> as a labeled graph.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -374,11 +430,11 @@ of an argument <em>A</em> will depend on the premises and exceptions in <em>A</e
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>proposition</strong> (<a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>) &#8211; The proposition to be checked.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>proposition</strong> (<a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>) &#8211; The proposition to be checked.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of the arguments pro the proposition</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>)</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="index.html#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -387,7 +443,7 @@ of an argument <em>A</em> will depend on the premises and exceptions in <em>A</e
 <dl class="method">
 <dt id="caes.caes.ArgumentSet.propset">
 <tt class="descname">propset</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/caes/caes.html#ArgumentSet.propset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.caes.ArgumentSet.propset" title="Permalink to this definition">¶</a></dt>
-<dd><p>The set of <a class="reference internal" href="#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>s represented by the vertices in
+<dd><p>The set of <a class="reference internal" href="index.html#caes.caes.PropLiteral" title="caes.caes.PropLiteral"><tt class="xref py py-class docutils literal"><span class="pre">PropLiteral</span></tt></a>s represented by the vertices in
 the graph.</p>
 </dd></dl>
 
@@ -442,7 +498,7 @@ the relevant proof standards, given the beliefs of the audience.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argument</strong> (<a class="reference internal" href="#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>) &#8211; The argument whose applicablility is being determined.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argument</strong> (<a class="reference internal" href="index.html#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>) &#8211; The argument whose applicablility is being determined.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
@@ -462,7 +518,7 @@ the relevant proof standards, given the beliefs of the audience.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>arguments</strong> (list(<a class="reference internal" href="#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>)) &#8211; The arguments whose weight is being compared.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>arguments</strong> (list(<a class="reference internal" href="index.html#caes.caes.Argument" title="caes.caes.Argument"><tt class="xref py py-class docutils literal"><span class="pre">Argument</span></tt></a>)) &#8211; The arguments whose weight is being compared.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The maximum of the weights of the arguments.</td>
 </tr>
@@ -546,11 +602,17 @@ except that the negation method is Boolean; i.e.</p>
 <dd></dd></dl>
 
 </div>
+</div>
+</div>
 <div class="section" id="module-caes.tracecalls">
 <span id="caes-tracecalls-module"></span><h2>caes.tracecalls module<a class="headerlink" href="#module-caes.tracecalls" title="Permalink to this headline">¶</a></h2>
+<p>Module to see what calls actually occurred during execution, their arguments
+and return values, when executing algorithms with complex function call
+sequences, and especially ones that require recursion.</p>
+<p>The class <a class="reference internal" href="index.html#caes.tracecalls.TraceCalls" title="caes.tracecalls.TraceCalls"><tt class="xref py py-class docutils literal"><span class="pre">TraceCalls</span></tt></a> is called as decorator <tt class="xref py py-func docutils literal"><span class="pre">&#64;TraceCalls()</span></tt>.</p>
 <dl class="class">
 <dt id="caes.tracecalls.TraceCalls">
-<em class="property">class </em><tt class="descname">TraceCalls</tt><big>(</big><em>indent_step=2</em>, <em>show_ret=True</em><big>)</big><a class="reference internal" href="../_modules/caes/tracecalls.html#TraceCalls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.tracecalls.TraceCalls" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descname">TraceCalls</tt><big>(</big><em>stream=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>indent_step=2</em>, <em>show_ret=True</em><big>)</big><a class="reference internal" href="../_modules/caes/tracecalls.html#TraceCalls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caes.tracecalls.TraceCalls" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">builtins.object</span></tt></p>
 <p>Use as a decorator on functions that should be traced. Several functions
 can be decorated - they will all be indented according to their call

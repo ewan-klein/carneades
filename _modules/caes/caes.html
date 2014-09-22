@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>caes.caes &mdash; Carneades 0.2b documentation</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    
+<link rel="stylesheet" href="../../_static/css/basicstrap-base.css" type="text/css" />
+<link rel="stylesheet" href="../../_static/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="../../_static/css/font-awesome.min.css">
+<!--[if IE 7]>
+<link rel="stylesheet" href="../../_static/css/font-awesome-ie7.min.css">
+<![endif]-->
+<style type="text/css">
+  body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+}
+</style>
+<link rel="stylesheet" href="../../_static/basicstrap.css" type="text/css" />
+<link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+<link rel="stylesheet" href="../../_static/css/bootstrap-responsive.min.css" type="text/css" />
+    
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '0.2b',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  true
+  };
+</script>
+<script type="text/javascript" src="../../_static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../_static/underscore.js"></script>
+<script type="text/javascript" src="../../_static/doctools.js"></script>
+<script type="text/javascript" src="../../_static/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.show-sidebar').click(function(e) {
+       e.preventDefault();
+       if ($(".show-sidebar").html() == "Open Table Of Contents") {
+          $('.for-mobile').removeClass('hidden-phone');
+          $(".show-sidebar").html("Close Table Of Contents");
+       } else {
+          $(".show-sidebar").html("Open Table Of Contents");
+       }
+    });
+  });
+</script>
+    <link rel="top" title="Carneades 0.2b documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top ">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="../../index.html">Carneades 0.2b documentation</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav pull-right">
+              
+                <li>
+                <a href="../../genindex.html" title="General Index" accesskey="I">index</a>
+                </li>
+                <li>
+                <a href="../../py-modindex.html" title="Python Module Index" >modules</a>
+                </li>
+                <li>
+                <a href="../index.html" accesskey="U">Module code</a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <!-- container -->
+    <div class="container-fluid">
+
+
+      
+      <div class="row-fluid hidden-desktop hidden-tablet">
+      
+<div class="span3 ">
+  <a class="visible-phone btn btn-small show-sidebar" data-toggle="collapse" data-target=".for-mobile">Open Table Of Contents</a>
+  <div class="for-mobile sidebar hidden-phone">
+<div id="searchbox">
+  <h3>Quick search</h3>
+  <form class="search form-search" action="../../search.html" method="get">
+      <div class="input-append">
+        <input type="text" class="search-query" name="q">
+        <input type="submit" class="btn" value="Go" />
+      </div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+  </div>
+</div>
+      </div>
+      
+
+      <!-- row -->
+      <div class="row-fluid">
+         
+<div class="span3 visible-desktop visible-tablet">
+  <div class=" sidebar hidden-phone">
+<div id="searchbox">
+  <h3>Quick search</h3>
+  <form class="search form-search" action="../../search.html" method="get">
+      <div class="input-append">
+        <input type="text" class="search-query" name="q">
+        <input type="submit" class="btn" value="Go" />
+      </div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+  </div>
+</div> 
+        
+
+        <div class="span9">
+          <div class="document">
+            <div class="documentwrapper">
+              <div class="bodywrapper">
+                <div class="body">
+                  
+  <h1>Source code for caes.caes</h1><div class="highlight"><pre>
+<span class="c"># Carneades Argument Evaluation Structure</span>
+<span class="c"># </span>
+<span class="c"># Copyright (C) 2014 Ewan Klein</span>
+<span class="c"># Author: Ewan Klein &lt;ewan@inf.ed.ac.uk&gt;</span>
+<span class="c"># Based on: https://hackage.haskell.org/package/CarneadesDSL</span>
+<span class="c">#</span>
+<span class="c"># For license information, see LICENSE.TXT</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">==========</span>
+<span class="sd"> Overview</span>
+<span class="sd">==========</span>
+
+<span class="sd">Propositions</span>
+<span class="sd">============</span>
+
+<span class="sd">First, let&#39;s create some propositions using the :class:`PropLiteral`</span>
+<span class="sd">constructor. All propositions are atomic, that is, either positive or negative literals.</span>
+
+<span class="sd">&gt;&gt;&gt; kill = PropLiteral(&#39;kill&#39;)</span>
+<span class="sd">&gt;&gt;&gt; kill.polarity</span>
+<span class="sd">True</span>
+<span class="sd">&gt;&gt;&gt; intent = PropLiteral(&#39;intent&#39;)</span>
+<span class="sd">&gt;&gt;&gt; murder = PropLiteral(&#39;murder&#39;)</span>
+<span class="sd">&gt;&gt;&gt; witness1 = PropLiteral(&#39;witness1&#39;)</span>
+<span class="sd">&gt;&gt;&gt; unreliable1 = PropLiteral(&#39;unreliable1&#39;)</span>
+<span class="sd">&gt;&gt;&gt; witness2 = PropLiteral(&#39;witness2&#39;)</span>
+<span class="sd">&gt;&gt;&gt; unreliable2 = PropLiteral(&#39;unreliable2&#39;)</span>
+
+<span class="sd">The :meth:`negate` method allows us to introduce negated propositions.</span>
+
+<span class="sd">&gt;&gt;&gt; neg_intent = intent.negate()</span>
+<span class="sd">&gt;&gt;&gt; print(neg_intent)</span>
+<span class="sd">-intent</span>
+<span class="sd">&gt;&gt;&gt; neg_intent.polarity</span>
+<span class="sd">False</span>
+<span class="sd">&gt;&gt;&gt; neg_intent == intent</span>
+<span class="sd">False</span>
+<span class="sd">&gt;&gt;&gt; neg_intent.negate() == intent</span>
+<span class="sd">True</span>
+
+<span class="sd">Arguments</span>
+<span class="sd">=========</span>
+
+<span class="sd">Arguments are built with the :class:`Argument` constructor. They are required</span>
+<span class="sd">to have a conclusion, and may also have premises and exceptions.</span>
+
+<span class="sd">&gt;&gt;&gt; arg1 = Argument(murder, premises={kill, intent})</span>
+<span class="sd">&gt;&gt;&gt; arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})</span>
+<span class="sd">&gt;&gt;&gt; arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2})</span>
+<span class="sd">&gt;&gt;&gt; print(arg1)</span>
+<span class="sd">[intent, kill], ~[] =&gt; murder</span>
+
+<span class="sd">In order to organise the dependencies between the conclusion of an argument</span>
+<span class="sd">and its premises and exceptions, we model them using a directed graph called</span>
+<span class="sd">an :class:`ArgumentSet`. Notice that the premise of one argument (e.g., the</span>
+<span class="sd">``intent`` premise of ``arg1``) can be the conclusion of another argument (i.e.,</span>
+<span class="sd">``arg2``)).</span>
+
+<span class="sd">&gt;&gt;&gt; argset = ArgumentSet()</span>
+<span class="sd">&gt;&gt;&gt; argset.add_argument(arg1, arg_id=&#39;arg1&#39;)</span>
+<span class="sd">&gt;&gt;&gt; argset.add_argument(arg2, arg_id=&#39;arg2&#39;)</span>
+<span class="sd">&gt;&gt;&gt; argset.add_argument(arg3, arg_id=&#39;arg3&#39;)</span>
+
+<span class="sd">There is a :func:`draw` method which allows us to view the resulting graph.</span>
+
+<span class="sd">&gt;&gt;&gt; argset.draw() # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt; argset.draw(fname=&#39;argset.svg&#39;) # doctest: +SKIP</span>
+<span class="sd">&gt;&gt;&gt; argset.draw()</span>
+
+<span class="sd">Proof Standards</span>
+<span class="sd">===============</span>
+
+<span class="sd">In evaluating the relative value of arguments for a particular conclusion</span>
+<span class="sd">``p``, we need to determine what standard of *proof* is required to establish</span>
+<span class="sd">``p``. The notion of proof used here is not formal proof in a logical</span>
+<span class="sd">system. Instead, it tries to capture how substantial the arguments are</span>
+<span class="sd">in favour of, or against, a particular conclusion.</span>
+
+<span class="sd">The :class:`ProofStandard` constructor is initialised with a list of</span>
+<span class="sd">``(proposition, name-of-proof-standard)`` pairs. The default proof standard,</span>
+<span class="sd">viz., ``&#39;scintilla&#39;``, is the weakest level.  Different</span>
+<span class="sd">propositions can be assigned different proof standards that they need</span>
+<span class="sd">to attain.</span>
+
+<span class="sd">&gt;&gt;&gt; ps = ProofStandard([(intent, &quot;beyond_reasonable_doubt&quot;)], default=&#39;scintilla&#39;)</span>
+
+<span class="sd">Carneades Argument Evaluation Structure</span>
+<span class="sd">=======================================</span>
+
+<span class="sd">The core of the argumentation model is a data structure plus set of</span>
+<span class="sd">rules for evaluating arguments; this is called a Carneades Argument</span>
+<span class="sd">Evaluation Structure (CAES). A CAES consists of a set of arguments,</span>
+<span class="sd">an audience (or jury), and a method for determining whether propositions</span>
+<span class="sd">satisfy the relevant proof standards. </span>
+
+<span class="sd">The role of the audience is modeled as an :class:`Audience`, consisting</span>
+<span class="sd">of a set of assumed propositions, and an assignment of weights to</span>
+<span class="sd">arguments.</span>
+
+<span class="sd">&gt;&gt;&gt; assumptions = {kill, witness1, witness2, unreliable2}</span>
+<span class="sd">&gt;&gt;&gt; weights = {&#39;arg1&#39;: 0.8, &#39;arg2&#39;: 0.3, &#39;arg3&#39;: 0.8}</span>
+<span class="sd">&gt;&gt;&gt; audience = Audience(assumptions, weights)</span>
+
+<span class="sd">Once an audience has been defined, we can use it to initialise a</span>
+<span class="sd">:class:`CAES`, together with instances of :class:`ArgumentSet` and</span>
+<span class="sd">:class:`ProofStandard`:</span>
+
+<span class="sd">&gt;&gt;&gt; caes = CAES(argset, audience, ps)</span>
+<span class="sd">&gt;&gt;&gt; caes.get_all_arguments()</span>
+<span class="sd">[intent, kill], ~[] =&gt; murder</span>
+<span class="sd">[witness1], ~[unreliable1] =&gt; intent</span>
+<span class="sd">[witness2], ~[unreliable2] =&gt; -intent</span>
+
+<span class="sd">The :meth:`get_arguments` method returns the list of arguments in an </span>
+<span class="sd">:class:`ArgumentSet` which support a given proposition.</span>
+
+<span class="sd">A proposition is said to be *acceptable* in a CAES if it meets its</span>
+<span class="sd">required proof standard. The process of checking whether a proposition</span>
+<span class="sd">meets its proof standard requires another notion: namely, whether the</span>
+<span class="sd">arguments that support it are *applicable*. An argument ``arg`` is applicable</span>
+<span class="sd">if and only if all its premises either belong to the audience&#39;s assumptions or are</span>
+<span class="sd">acceptable; moreover, the exceptions of ``arg`` must not belong to the</span>
+<span class="sd">assumptions or be acceptable. For example, `arg2`, which supports the</span>
+<span class="sd">conclusion `intent`, is acceptable since `witness1` is an assumption,</span>
+<span class="sd">while the exception `unreliable1` is neither an assumption nor acceptable.</span>
+
+<span class="sd">&gt;&gt;&gt; arg_for_intent = argset.get_arguments(intent)[0]</span>
+<span class="sd">&gt;&gt;&gt; print(arg_for_intent)</span>
+<span class="sd">[witness1], ~[unreliable1] =&gt; intent</span>
+<span class="sd">&gt;&gt;&gt; caes.applicable(arg_for_intent)</span>
+<span class="sd">True</span>
+
+<span class="sd">&gt;&gt;&gt; caes.acceptable(intent)</span>
+<span class="sd">False</span>
+
+<span class="sd">Although there is an argument (``arg3``) for `-intent`, it is not applicable,</span>
+<span class="sd">since the exception `unreliable2` does belong to the audience&#39;s assumptions.</span>
+
+<span class="sd">&gt;&gt;&gt; any(caes.applicable(arg) for arg in argset.get_arguments(neg_intent))</span>
+<span class="sd">False</span>
+
+<span class="sd">This in turn has the consequence that `-intent` is not acceptable.</span>
+
+<span class="sd">&gt;&gt;&gt; caes.acceptable(neg_intent)</span>
+<span class="sd">False</span>
+
+<span class="sd">Despite the fact that the argument `arg2` for `murder` is applicable,</span>
+<span class="sd">the conclusion `murder` is not acceptable, since  </span>
+
+<span class="sd">&gt;&gt;&gt; caes.acceptable(murder)</span>
+<span class="sd">False</span>
+<span class="sd">&gt;&gt;&gt; caes.acceptable(murder.negate())</span>
+<span class="sd">False</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">igraph</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.tracecalls</span> <span class="kn">import</span> <span class="n">TraceCalls</span>
+
+<span class="n">LOGLEVEL</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+<span class="c"># Uncomment the following line to turn off debug messages</span>
+<span class="c">#LOGLEVEL = logging.INFO</span>
+
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(levelname)s</span><span class="s">: </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">LOGLEVEL</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PropLiteral"><a class="viewcode-back" href="../../api/index.html#caes.caes.PropLiteral">[docs]</a><span class="k">class</span> <span class="nc">PropLiteral</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Proposition literals have most of the properties of ordinary strings,</span>
+<span class="sd">    except that the negation method is Boolean; i.e. </span>
+
+<span class="sd">    &gt;&gt;&gt; a = PropLiteral(&#39;a&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; a.negate().negate() == a</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PropLiteral.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.PropLiteral.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">polarity</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Propositions are either positive or negative atoms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polarity</span> <span class="o">=</span> <span class="n">polarity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_string</span> <span class="o">=</span> <span class="n">string</span>
+
+</div>
+<div class="viewcode-block" id="PropLiteral.negate"><a class="viewcode-back" href="../../api/index.html#caes.caes.PropLiteral.negate">[docs]</a>    <span class="k">def</span> <span class="nf">negate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Negation of a proposition.</span>
+
+<span class="sd">        We create a copy of the current proposition and flip its polarity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">polarity</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">polarity</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string</span><span class="p">,</span> <span class="n">polarity</span><span class="o">=</span><span class="n">polarity</span><span class="p">)</span>
+
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override ``__str__()`` so that negation is realised as a prefix on the</span>
+<span class="sd">        string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polarity</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span>
+        <span class="k">return</span> <span class="s">&quot;-&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_string</span><span class="o">.</span><span class="n">__hash__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">__str__</span><span class="p">()</span>
+
+
+
+
+</div>
+<div class="viewcode-block" id="Argument"><a class="viewcode-back" href="../../api/index.html#caes.caes.Argument">[docs]</a><span class="k">class</span> <span class="nc">Argument</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An argument consists of a conclusion, a set of premises and a set of</span>
+<span class="sd">    exceptions (both of which can be empty).</span>
+
+<span class="sd">    Although arguments should have identifiers (`arg_id`), it is preferable to specify</span>
+<span class="sd">    these when calling the :meth:`add_argument` method of :class:`ArgumentSet`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Argument.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.Argument.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conclusion</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span> <span class="n">exceptions</span><span class="o">=</span><span class="nb">set</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;        </span>
+<span class="sd">        :param conclusion: The conclusion of the argument.</span>
+<span class="sd">        :type conclusion: :class:`PropLiteral`</span>
+<span class="sd">        :param premises: The premises of the argument.</span>
+<span class="sd">        :type premises: set(:class:`PropLiteral`)</span>
+<span class="sd">        :param exceptions: The exceptions of the argument</span>
+<span class="sd">        :type exceptions: set(:class:`PropLiteral`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conclusion</span> <span class="o">=</span> <span class="n">conclusion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">premises</span> <span class="o">=</span> <span class="n">premises</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exceptions</span> <span class="o">=</span> <span class="n">exceptions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_id</span> <span class="o">=</span> <span class="bp">None</span>
+
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">premises</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prems</span> <span class="o">=</span> <span class="s">&quot;[]&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prems</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">premises</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exceptions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">excepts</span> <span class="o">=</span> <span class="s">&quot;[]&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">excepts</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exceptions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&quot;{}, ~{} =&gt; {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prems</span><span class="p">,</span> <span class="n">excepts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conclusion</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ArgumentSet"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet">[docs]</a><span class="k">class</span> <span class="nc">ArgumentSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An ``ArgumentSet`` is modeled as a dependency graph where vertices represent</span>
+<span class="sd">    the components of an argument. A vertex corresponding to the conclusion</span>
+<span class="sd">    of an argument *A* will depend on the premises and exceptions in *A*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ArgumentSet.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">to_directed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="ArgumentSet.propset"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.propset">[docs]</a>    <span class="k">def</span> <span class="nf">propset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The set of :class:`PropLiteral`\ s represented by the vertices in</span>
+<span class="sd">        the graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">props</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;prop&#39;</span><span class="p">]}</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">props</span>
+</div>
+<div class="viewcode-block" id="ArgumentSet.add_proposition"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.add_proposition">[docs]</a>    <span class="k">def</span> <span class="nf">add_proposition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a proposition to a graph if it is not already present as a vertex.</span>
+
+<span class="sd">        :param prop: The proposition to be added to the graph.</span>
+<span class="sd">        :type prop: :class:`PropLiteral`</span>
+<span class="sd">        :return: The graph vertex corresponding to the proposition.</span>
+<span class="sd">        :rtype: :class:`PropLiteral`</span>
+<span class="sd">        :raises TypeError: if the input is not a :class:`PropLiteral`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="n">PropLiteral</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">proposition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">propset</span><span class="p">():</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Proposition &#39;{}&#39; is already in graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">))</span>                     
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">proposition</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Added proposition &#39;{}&#39; to graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">vs</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">proposition</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>                
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Input {} should be PropLiteral&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ArgumentSet.add_argument"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.add_argument">[docs]</a>    <span class="k">def</span> <span class="nf">add_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">arg_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an argument to the graph.</span>
+
+<span class="sd">        :parameter argument: The argument to be added to the graph.</span>
+<span class="sd">        :type argument: :class:`Argument`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+        <span class="k">if</span> <span class="n">arg_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">argument</span><span class="o">.</span><span class="n">arg_id</span> <span class="o">=</span> <span class="n">arg_id</span>        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">argument</span><span class="o">.</span><span class="n">arg_id</span> <span class="o">=</span> <span class="s">&#39;arg{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span>
+
+        <span class="c"># add an argument vertex to the graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">argument</span><span class="o">.</span><span class="n">arg_id</span><span class="p">)</span>
+        <span class="n">arg_v</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">argument</span><span class="o">.</span><span class="n">arg_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c"># add proposition vertices to the graph    </span>
+        <span class="n">conclusion_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_proposition</span><span class="p">(</span><span class="n">argument</span><span class="o">.</span><span class="n">conclusion</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_proposition</span><span class="p">(</span><span class="n">argument</span><span class="o">.</span><span class="n">conclusion</span><span class="o">.</span><span class="n">negate</span><span class="p">())</span>
+        <span class="n">premise_vs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">add_proposition</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span> <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">argument</span><span class="o">.</span><span class="n">premises</span><span class="p">)]</span>
+        <span class="n">exception_vs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">add_proposition</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span> <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">argument</span><span class="o">.</span><span class="n">exceptions</span><span class="p">)]</span>
+        <span class="n">target_vs</span> <span class="o">=</span> <span class="n">premise_vs</span> <span class="o">+</span> <span class="n">exception_vs</span>
+
+        <span class="c"># add new edges to the graph</span>
+        <span class="n">edge_to_arg</span> <span class="o">=</span> <span class="p">[(</span><span class="n">conclusion_v</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">arg_v</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>
+        <span class="n">edges_from_arg</span> <span class="o">=</span> <span class="p">[(</span><span class="n">arg_v</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">target_vs</span><span class="p">]</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add_edges</span><span class="p">(</span><span class="n">edge_to_arg</span> <span class="o">+</span> <span class="n">edges_from_arg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ArgumentSet.get_arguments"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.get_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the arguments for a proposition in an *ArgumentSet*.</span>
+
+<span class="sd">        :param proposition: The proposition to be checked.</span>
+<span class="sd">        :type proposition: :class:`PropLiteral`</span>
+<span class="sd">        :return: A list of the arguments pro the proposition</span>
+<span class="sd">        :rtype: list(:class:`Argument`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+
+        <span class="c"># index of vertex associated with the proposition</span>
+        <span class="n">vs</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">proposition</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">conc_v_index</span> <span class="o">=</span> <span class="n">vs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+            <span class="c"># IDs of vertices reachable in one hop from the proposition&#39;s vertex</span>
+            <span class="n">target_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">target</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">es</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">_source</span><span class="o">=</span><span class="n">conc_v_index</span><span class="p">)]</span>
+
+            <span class="c"># the vertices indexed by target_IDs</span>
+            <span class="n">out_vs</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">target_IDs</span><span class="p">]</span>
+
+            <span class="n">arg_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">out_vs</span><span class="p">]</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">arg_id</span> <span class="ow">in</span> <span class="n">arg_IDs</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">args</span>            
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Proposition &#39;{}&#39; is not in the current graph&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">))</span>
+
+
+
+
+</div>
+<div class="viewcode-block" id="ArgumentSet.draw"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">roots</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Visualise an :class:`ArgumentSet` as a labeled graph.</span>
+
+<span class="sd">        :parameter debug: If :class:`True`, add the vertex index to the label.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
+
+        <span class="c"># labels for nodes that are classed as propositions</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;prop&#39;</span><span class="p">]</span>
+
+        <span class="c"># insert the labels for nodes that are classed as arguments</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">d_labels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+                <span class="n">d_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;{}</span><span class="se">\n</span><span class="s">v{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">d_labels</span>
+
+        <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
+
+        <span class="k">if</span> <span class="n">roots</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>     
+            <span class="n">roots</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">))</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">indegree</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">layout_reingold_tilford</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">ALL</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">roots</span><span class="p">)</span>
+
+        <span class="n">plot_style</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">plot_style</span><span class="p">[</span><span class="s">&#39;vertex_color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;lightblue&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="s">&#39;pink&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">]</span> <span class="p">]</span>  
+        <span class="n">plot_style</span><span class="p">[</span><span class="s">&#39;vertex_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">60</span>
+        <span class="n">plot_style</span><span class="p">[</span><span class="s">&#39;vertex_shape&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;circle&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="s">&#39;rect&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">]</span> <span class="p">]</span>      
+        <span class="n">plot_style</span><span class="p">[</span><span class="s">&#39;margin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">40</span>
+        <span class="n">plot_style</span><span class="p">[</span><span class="s">&#39;layout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">layout</span>
+
+        <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            
+            <span class="n">g</span><span class="o">.</span><span class="n">write_svg</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_style</span><span class="p">)</span>        
+        <span class="k">else</span><span class="p">:</span>
+            
+            <span class="n">plot</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_style</span><span class="p">)</span>
+
+
+
+
+
+
+
+</div></div>
+<div class="viewcode-block" id="ProofStandard"><a class="viewcode-back" href="../../api/index.html#caes.caes.ProofStandard">[docs]</a><span class="k">class</span> <span class="nc">ProofStandard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Each proposition in a CAES is associated with a proof standard.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ProofStandard.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.ProofStandard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">propstandards</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proof_standards</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;scintilla&quot;</span><span class="p">,</span> <span class="s">&quot;preponderance&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;clear_and_convincing&quot;</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;dialectical_validity&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_standard</span><span class="p">(</span><span class="n">propstandards</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_set_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">propstandards</span><span class="p">):</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">standard</span><span class="p">)</span> <span class="ow">in</span> <span class="n">propstandards</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">standard</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">proof_standards</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;{} is not a valid proof standard&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">standard</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">=</span> <span class="n">standard</span>
+
+
+<div class="viewcode-block" id="ProofStandard.assign_standard"><a class="viewcode-back" href="../../api/index.html#caes.caes.ProofStandard.assign_standard">[docs]</a>    <span class="k">def</span> <span class="nf">assign_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span>
+
+</div></div>
+<span class="n">Audience</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;Audience&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;assumptions&#39;</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">])</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An audience has assumptions about which premises hold and also</span>
+<span class="sd">assigns weights to arguments.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<div class="viewcode-block" id="CAES"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES">[docs]</a><span class="k">class</span> <span class="nc">CAES</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that represents a Carneades Argument Evaluation Structure (CAES).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CAES.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">proofstandard</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                 <span class="n">gamma</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :type argset: :class:`ArgSet`</span>
+<span class="sd">        :type audience: :class:`Audience`</span>
+<span class="sd">        :type standard: :class:`ProofStandard`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">argset</span> <span class="o">=</span> <span class="n">argset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assumptions</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">assumptions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">standard</span> <span class="o">=</span> <span class="n">proofstandard</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+
+</div>
+<div class="viewcode-block" id="CAES.get_all_arguments"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.get_all_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">arguments</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+</div>
+    <span class="nd">@TraceCalls</span><span class="p">()</span>    
+<div class="viewcode-block" id="CAES.applicable"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.applicable">[docs]</a>    <span class="k">def</span> <span class="nf">applicable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.</span>
+
+<span class="sd">        :parameter argument: The argument whose applicablility is being determined.</span>
+<span class="sd">        :type argument: :class:`Argument`</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_acceptable</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_applicable</span><span class="p">(</span><span class="n">argument</span><span class="p">,</span> <span class="n">_acceptable</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_applicable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">_acceptable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;       </span>
+<span class="sd">        :parameter argument: The argument whose applicablility is being determined.</span>
+<span class="sd">        :type argument: :class:`Argument`</span>
+<span class="sd">        :parameter _acceptable: The function which determines the acceptability of a proposition in the CAES.</span>
+<span class="sd">        :type _acceptable: LambdaType</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Checking applicability of {}...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">argument</span><span class="o">.</span><span class="n">arg_id</span><span class="p">))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Current assumptions: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assumptions</span><span class="p">))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Current premises: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">argument</span><span class="o">.</span><span class="n">premises</span><span class="p">))</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumptions</span> <span class="ow">or</span> \
+                 <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumptions</span> <span class="ow">and</span> <span class="n">_acceptable</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">argument</span><span class="o">.</span><span class="n">premises</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">argument</span><span class="o">.</span><span class="n">exceptions</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Current exception: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">argument</span><span class="o">.</span><span class="n">exceptions</span><span class="p">))</span>
+        <span class="n">b2</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumptions</span> <span class="ow">and</span> \
+                 <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumptions</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_acceptable</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">argument</span><span class="o">.</span><span class="n">exceptions</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">b1</span> <span class="ow">and</span> <span class="n">b2</span>
+
+
+    <span class="nd">@TraceCalls</span><span class="p">()</span>
+<div class="viewcode-block" id="CAES.acceptable"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.acceptable">[docs]</a>    <span class="k">def</span> <span class="nf">acceptable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A conclusion is *acceptable* in a CAES if it can be arrived at under</span>
+<span class="sd">        the relevant proof standards, given the beliefs of the audience.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">standard</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard</span><span class="o">.</span><span class="n">assign_standard</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Checking whether proposition &#39;{}&#39; meets proof standard &#39;{}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="n">standard</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">meets_proof_standard</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="n">standard</span><span class="p">)</span>
+</div>
+    <span class="nd">@TraceCalls</span><span class="p">()</span>
+<div class="viewcode-block" id="CAES.meets_proof_standard"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.meets_proof_standard">[docs]</a>    <span class="k">def</span> <span class="nf">meets_proof_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">,</span> <span class="n">standard</span><span class="p">):</span>
+        <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="n">standard</span> <span class="o">==</span> <span class="s">&#39;scintilla&#39;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arguments</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">applicable</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>            
+        <span class="k">elif</span> <span class="n">standard</span> <span class="o">==</span> <span class="s">&#39;preponderance&#39;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_pro</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_con</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">standard</span> <span class="o">==</span> <span class="s">&#39;clear_and_convincing&#39;</span><span class="p">:</span>
+            <span class="n">mwp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_pro</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
+            <span class="n">mwc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_con</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
+            <span class="n">exceeds_alpha</span> <span class="o">=</span> <span class="n">mwp</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+            <span class="n">diff_exceeds_gamma</span> <span class="o">=</span> <span class="p">(</span><span class="n">mwp</span> <span class="o">-</span> <span class="n">mwc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;max weight pro &#39;{}&#39; is {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="n">mwp</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;max weight con &#39;{}&#39; is {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="n">mwc</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;max weight pro &#39;{}&#39; &gt;  alpha &#39;{}&#39;: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mwp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">exceeds_alpha</span><span class="p">))</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;diff between pro and con = {} &gt; gamma: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mwp</span><span class="o">-</span><span class="n">mwc</span><span class="p">,</span> <span class="n">diff_exceeds_gamma</span><span class="p">))</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">mwp</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mwp</span> <span class="o">-</span> <span class="n">mwc</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>            
+        <span class="k">elif</span> <span class="n">standard</span> <span class="o">==</span> <span class="s">&#39;beyond_reasonable_doubt&#39;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meets_proof_standard</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="s">&#39;clear_and_convincing&#39;</span><span class="p">)</span>\
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_con</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>            
+
+
+        <span class="c">#logging.debug(&quot;Proposition &#39;{}&#39; meets standard &#39;{}&#39;: {}&quot;.format(proposition, standard, result))</span>
+        <span class="k">return</span> <span class="n">result</span>        
+</div>
+<div class="viewcode-block" id="CAES.weight_of"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.weight_of">[docs]</a>    <span class="k">def</span> <span class="nf">weight_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+        <span class="n">arg_id</span> <span class="o">=</span> <span class="n">argument</span><span class="o">.</span><span class="n">arg_id</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">arg_id</span><span class="p">]</span>            
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;No weight assigned to argument &#39;{}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_id</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="CAES.max_weight_applicable"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.max_weight_applicable">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_applicable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :parameter arguments: The arguments whose weight is being compared.</span>
+<span class="sd">        :type arguments: list(:class:`Argument`)</span>
+<span class="sd">        :return: The maximum of the weights of the arguments.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arg_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">arg_id</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">]</span>
+
+        <span class="n">applicable_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arguments</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">applicable</span><span class="p">(</span><span class="n">arg</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">applicable_args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;No applicable arguments in {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_ids</span><span class="p">))</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">applic_arg_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">arg_id</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">applicable_args</span><span class="p">]</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Checking applicability and weights of {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">applic_arg_ids</span><span class="p">))</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_of</span><span class="p">(</span><span class="n">argument</span><span class="p">)</span> <span class="k">for</span> <span class="n">argument</span> <span class="ow">in</span> <span class="n">applicable_args</span><span class="p">]</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Weights of {} are {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">applic_arg_ids</span><span class="p">,</span> <span class="n">weights</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CAES.max_weight_pro"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.max_weight_pro">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_pro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_applicable</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CAES.max_weight_con"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.max_weight_con">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_con</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+        <span class="n">con</span> <span class="o">=</span> <span class="n">proposition</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_applicable</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>    
+
+
+</div></div>
+<span class="n">DOCTEST</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="arg_test"><a class="viewcode-back" href="../../api/index.html#caes.caes.arg_test">[docs]</a><span class="k">def</span> <span class="nf">arg_test</span><span class="p">():</span>
+    <span class="n">kill</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;kill&#39;</span><span class="p">)</span>
+    <span class="n">intent</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;intent&#39;</span><span class="p">)</span>
+    <span class="n">neg_intent</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span>
+    <span class="n">murder</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;murder&#39;</span><span class="p">)</span>
+    <span class="n">witness1</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;witness1&#39;</span><span class="p">)</span>
+    <span class="n">unreliable1</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;unreliable1&#39;</span><span class="p">)</span>
+    <span class="n">witness2</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;witness2&#39;</span><span class="p">)</span>
+    <span class="n">unreliable2</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;unreliable2&#39;</span><span class="p">)</span>
+
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">ProofStandard</span><span class="p">([(</span><span class="n">intent</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">)],</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">)</span>
+
+    <span class="n">arg1</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">murder</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">intent</span><span class="p">},</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg1&#39;</span><span class="p">)</span>
+    <span class="n">arg2</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness1</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable1</span><span class="p">},</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg2&#39;</span><span class="p">)</span>
+    <span class="n">arg3</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness2</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable2</span><span class="p">},</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg3&#39;</span><span class="p">)</span>
+
+    <span class="n">argset</span> <span class="o">=</span> <span class="n">ArgumentSet</span><span class="p">()</span>
+    <span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
+    <span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg2</span><span class="p">)</span>
+    <span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg3</span><span class="p">)</span>
+    <span class="n">argset</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#for arg in argset.get_arguments(intent): </span>
+        <span class="c">#print(arg)</span>
+
+
+    <span class="n">assumptions</span> <span class="o">=</span> <span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">witness1</span><span class="p">,</span> <span class="n">witness2</span><span class="p">,</span> <span class="n">unreliable2</span><span class="p">}</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;arg1&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;arg2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s">&#39;arg3&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}</span>
+    <span class="n">audience</span> <span class="o">=</span> <span class="n">Audience</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+    <span class="n">caes</span> <span class="o">=</span> <span class="n">CAES</span><span class="p">(</span><span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>    
+    <span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">murder</span><span class="p">)</span>
+    <span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">murder</span><span class="o">.</span><span class="n">negate</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="graph_test"><a class="viewcode-back" href="../../api/index.html#caes.caes.graph_test">[docs]</a><span class="k">def</span> <span class="nf">graph_test</span><span class="p">():</span>
+
+    <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">to_directed</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;kill&#39;</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;intent&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;murder&#39;</span><span class="p">)</span>
+
+    <span class="n">g</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;prop&#39;</span><span class="p">]</span>
+
+    <span class="n">g</span><span class="o">.</span><span class="n">add_edges</span><span class="p">([(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">es</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;arg1&#39;</span><span class="p">,</span> <span class="s">&#39;arg2&#39;</span><span class="p">]</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">es</span><span class="p">[</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">es</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">]</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;prop&#39;</span><span class="p">]]</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">layout_grid</span><span class="p">()</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">layout_auto</span><span class="p">()</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">vertex_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vertex_label_dist</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">DOCTEST</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">doctest</span>
+        <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">(</span><span class="n">optionflags</span><span class="o">=</span><span class="n">doctest</span><span class="o">.</span><span class="n">NORMALIZE_WHITESPACE</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">arg_test</span><span class="p">()</span>
+</pre></div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+      </div><!-- /row -->
+
+      <!-- row -->
+      <div class="row-fluid">
+<div class="related navbar ">
+  <div class="navbar-inner">
+    <ul class="nav pull-right">
+      
+        <li><a href="../../genindex.html" title="General Index" >index</a></li>
+        <li><a href="../../py-modindex.html" title="Python Module Index" >modules</a></li>
+        <li><a href="../../index.html">Carneades 0.2b documentation</a></li>
+        <li><a href="../index.html" >Module code</a></li> 
+      
+    </ul>
+  </div>
+</div>
+      </div><!-- /row -->
+
+      <!-- footer -->
+      <footer>
+          &copy; Copyright 2014, Ewan Klein.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.3.
+      </footer>
+      <!-- /footer -->
+
+    </div>
+    <!-- /container -->
+
+  </body>
+</html>
