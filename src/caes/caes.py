@@ -58,9 +58,9 @@ an :class:`ArgumentSet`. Notice that the premise of one argument (e.g., the
 ``arg2``)).
 
 >>> argset = ArgumentSet()
->>> argset.add_argument(arg1)
->>> argset.add_argument(arg2)
->>> argset.add_argument(arg3)
+>>> argset.add_argument(arg1, arg_id='arg1')
+>>> argset.add_argument(arg2, arg_id='arg2')
+>>> argset.add_argument(arg3, arg_id='arg3')
 
 There is a :func:`draw` method which allows us to view the resulting graph.
 
@@ -130,6 +130,7 @@ while the exception `unreliable1` is neither an assumption nor acceptable.
 True
 
 >>> caes.acceptable(intent)
+False
 
 Although there is an argument (``arg3``) for `-intent`, it is not applicable,
 since the exception `unreliable2` does belong to the audience's assumptions.
@@ -158,7 +159,7 @@ False
 from collections import namedtuple
 import logging
 from igraph import *
-from caes.tracecalls import TraceCalls
+from tracecalls import TraceCalls
 
 #LOGLEVEL = logging.DEBUG
 LOGLEVEL = logging.INFO
@@ -228,8 +229,11 @@ class Argument(object):
     """
     An argument consists of a conclusion, a set of premises and a set of
     exceptions (both of which can be empty).
+    
+    Although arguments should have identifiers (`arg_id`), it is preferable to specify
+    these when calling the :meth:`add_argument` method of :class:`ArgumentSet`.
     """
-    def __init__(self, conclusion, premises=set(), exceptions=set(), arg_id=None):
+    def __init__(self, conclusion, premises=set(), exceptions=set()):
         """        
         :param conclusion: The conclusion of the argument.
         :type conclusion: :class:`PropLiteral`
@@ -237,18 +241,12 @@ class Argument(object):
         :type premises: set(:class:`PropLiteral`)
         :param exceptions: The exceptions of the argument
         :type exceptions: set(:class:`PropLiteral`)
-        :param arg_id: The exceptions of the argument
-        :type arg_id: None or str
-        :param weight: The exceptions of the argument
-        :type arg_id: None or str
-
         """
 
         self.conclusion = conclusion
         self.premises = premises
         self.exceptions = exceptions
-        self.arg_id = arg_id
-
+        self.arg_id = None
 
 
     def __str__(self):
@@ -272,7 +270,7 @@ class ArgumentSet(object):
     def __init__(self):
         self.graph = Graph()
         self.graph.to_directed()
-        self.arg_count = 0
+        self.arg_count = 1
         self.arguments = []
 
     def propset(self):
@@ -309,7 +307,7 @@ class ArgumentSet(object):
         else:
             raise TypeError('Input {} should be PropLiteral'.format(proposition))
 
-    def add_argument(self, argument):
+    def add_argument(self, argument, arg_id=None):
         """
         Add an argument to the graph.
 
@@ -317,17 +315,16 @@ class ArgumentSet(object):
         :type argument: :class:`Argument`
         """
         g = self.graph
-        arg_id = 'arg{}'.format(self.arg_count)
-        if argument.arg_id is None:
-            argument.arg_id = arg_id
+        if arg_id is not None:
+            argument.arg_id = arg_id        
         else:
-            arg_id = argument.arg_id
+            argument.arg_id = 'arg{}'.format(self.arg_count)
         self.arg_count += 1
         self.arguments.append(argument)
 
         # add an argument vertex to the graph
-        self.graph.add_vertex(arg=arg_id)
-        arg_v = g.vs.select(arg=arg_id)[0]
+        self.graph.add_vertex(arg=argument.arg_id)
+        arg_v = g.vs.select(arg=argument.arg_id)[0]
 
         # add proposition vertices to the graph    
         conclusion_v = self.add_proposition(argument.conclusion)
@@ -531,7 +528,12 @@ class CAES(object):
         elif standard == 'clear_and_convincing':
             mwp = self.max_weight_pro(proposition)
             mwc = self.max_weight_con(proposition)
-            logging.debug("    {}: weight pro '{}' >  weight con '{}'?".format(proposition, mwp, mwc))
+            exceeds_alpha = mwp > self.alpha
+            diff_exceeds_gamma = (mwp - mwc) > self.gamma
+            logging.debug("max weight pro '{}' is {}".format(proposition, mwp))
+            logging.debug("max weight con '{}' is {}".format(proposition, mwc))
+            logging.debug("max weight pro '{}' >  alpha '{}': {}".format(mwp, self.alpha, exceeds_alpha))
+            logging.debug("diff between pro and con = {} > gamma: {}".format(mwp-mwc, diff_exceeds_gamma))
 
             result = (mwp > self.alpha) and (mwp - mwc > self.gamma)            
         elif standard == 'beyond_reasonable_doubt':
@@ -558,11 +560,11 @@ class CAES(object):
         :rtype: int
         """
         arg_ids = [arg.arg_id for arg in arguments]
-        logging.debug('Checking applicability and weights of {}'.format(arg_ids))
+      
         applicable_args = [arg for arg in arguments if self.applicable(arg)]
         if len(applicable_args) == 0:
             logging.debug('No applicable arguments in {}'.format(arg_ids))
-            return 0
+            return 0.0
 
         applic_arg_ids = [arg.arg_id for arg in applicable_args]
         logging.debug('Checking applicability and weights of {}'.format(applic_arg_ids))
@@ -575,7 +577,8 @@ class CAES(object):
         return self.max_weight_applicable(args)
 
     def max_weight_con(self, proposition):
-        args = self.argset.get_arguments(proposition.negate())
+        con = proposition.negate()
+        args = self.argset.get_arguments(con)
         return self.max_weight_applicable(args)    
 
 
