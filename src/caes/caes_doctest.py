@@ -4,7 +4,7 @@ Tests for caes module.
 Propositions
 ------------
 
->>> from caes import *
+
 
 Construct some proposition literals.
 
@@ -141,6 +141,8 @@ Vacuously true if there are no premises
 True
 """
 
-if __name__ == '__main__':       
+if __name__ == '__main__':
+    from caes import *
+    from tracecalls import TraceCalls
     import doctest
     doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
