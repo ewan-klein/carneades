@@ -65,7 +65,6 @@ an :class:`ArgumentSet`. Notice that the premise of one argument (e.g., the
 There is a :func:`draw` method which allows us to view the resulting graph.
 
 >>> argset.draw() # doctest: +SKIP
->>> argset.draw(fname='argset.svg') 
 
 Proof Standards
 ===============
