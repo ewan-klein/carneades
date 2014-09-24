@@ -1,13 +1,17 @@
 The Carneades model of argumentation
 ====================================
 
-This is a Python implementation of the `Carneades argumentation model
+The `Python carneades project <https://github.com/ewan-klein/carneades>`_ is
+an implementation of the `Carneades argumentation model
 <http://carneades.github.io/carneades/Carneades/>`_. It closely
 follows the Haskell `Carneades DSL
 <http://www.cs.nott.ac.uk/~bmv/CarneadesDSL>`_ by Bas van Gijzel and
 Henrik Nilsson, especially `this detailed code
 <http://www.cs.nott.ac.uk/~bmv/Code/CarneadesDSLWithCycleChecking.lhs>`_
-(also available as `LateX-ed PDF <CarneadesDSL.pdf>`_.
+(also available in a more readable `LaTeX-ed PDF version
+<CarneadesDSL.pdf>`_).
+
+For more detailed information, see the `API documentation <api/index>`_.
 
 The main module ``caes.py`` uses the ``igraph`` package for
 representing dependencies between arguments. For documentation, see
@@ -23,11 +27,9 @@ illustrated below.
 .. image:: argset.png
    :width: 500 px
 
-Contents
---------
 
 .. toctree::
-   :maxdepth: 1
+   :hidden:
   
    CAES API <api/index>
    
