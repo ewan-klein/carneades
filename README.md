@@ -42,6 +42,7 @@ $ pip install python-igraph
 This should also install the C bindings. If that doesn't happen because of some error, it's like one of those problems:
 
 1) The header files for the python distribution are not installed. Look up `python-dev` or `python3.4-dev`
+
 2) You need to compile the C code from source: download it
 [here](http://igraph.org/) and follow the instructions. In general you
 should only need to follow the standard procedure:
