@@ -30,12 +30,12 @@ illustrated below.
 .. toctree::
    :hidden:
   
-   CAES API <api/index>
+   api/index
    
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`search`
