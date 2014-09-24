@@ -8,10 +8,10 @@ follows the Haskell `Carneades DSL
 <http://www.cs.nott.ac.uk/~bmv/CarneadesDSL>`_ by Bas van Gijzel and
 Henrik Nilsson, especially `this detailed code
 <http://www.cs.nott.ac.uk/~bmv/Code/CarneadesDSLWithCycleChecking.lhs>`_
-(also available in a more readable `LaTeX-ed PDF version
-<CarneadesDSL.pdf>`_).
+(also available in a more readable LaTeX-ed :download:`PDF
+<CarneadesDSL.pdf>` version).
 
-For more detailed information, see the `API documentation <api/index>`_.
+For more detailed module documentation, see the `API documentation <api/index>`_.
 
 The main module ``caes.py`` uses the ``igraph`` package for
 representing dependencies between arguments. For documentation, see
@@ -31,13 +31,6 @@ illustrated below.
 .. toctree::
    :hidden:
   
-   CAES API <api/index>
-   
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
+   api/index
+ 
 

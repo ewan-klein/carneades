@@ -45,7 +45,7 @@ docs/_build/
 
 # Wingide
 *.wpu
+*.wpr
 
-src/carneades
-src/caes/pro_and_con.txt
+pro_and_con.txt
 
