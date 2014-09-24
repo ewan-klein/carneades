@@ -5,7 +5,9 @@ This is a Python implementation of the `Carneades argumentation model
 <http://carneades.github.io/carneades/Carneades/>`_. It closely
 follows the Haskell `Carneades DSL
 <http://www.cs.nott.ac.uk/~bmv/CarneadesDSL>`_ by Bas van Gijzel and
-Henrik Nilsson, especially `this detailed code <http://www.cs.nott.ac.uk/~bmv/Code/CarneadesDSLWithCycleChecking.lhs>`_.
+Henrik Nilsson, especially `this detailed code
+<http://www.cs.nott.ac.uk/~bmv/Code/CarneadesDSLWithCycleChecking.lhs>`_
+(also available as `LateX-ed PDF <CarneadesDSL.pdf>`_.
 
 The main module ``caes.py`` uses the ``igraph`` package for
 representing dependencies between arguments. For documentation, see
