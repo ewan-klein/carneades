@@ -160,9 +160,10 @@ from collections import namedtuple
 import logging
 from igraph import *
 
+# fix to ensure that package is loaded properly on system path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from caes.tracecalls import TraceCalls
+from carneades.tracecalls import TraceCalls
 
 
 LOGLEVEL = logging.DEBUG
