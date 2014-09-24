@@ -159,10 +159,10 @@ False
 from collections import namedtuple
 import logging
 from igraph import *
-from tracecalls import TraceCalls
+from caes.tracecalls import TraceCalls
 
 LOGLEVEL = logging.DEBUG
-# Uncomment the following line to turn off debug messages
+# Uncomment the following line to raise the logging level and thereby turn off debug messages
 #LOGLEVEL = logging.INFO
 
 
