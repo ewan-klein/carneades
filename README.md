@@ -32,7 +32,7 @@ $ pip install sphinxjp.themes.basicstrap
 ```
 $ pip install python-igraph
 ```
-Note for Linux users (especially Ubuntu 12.04 users): follow this [link](#Install igraph)
+Note for Linux users (especially Ubuntu 12.04 users): follow this [link](#install-igraph)
 * Clone repository
 ```
 $ git clone https://github.com/ewan-klein/carneades.git
