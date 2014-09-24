@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     
-    <title>caes.caes &mdash; Carneades 0.2b documentation</title>
+    <title>caes.caes &mdash; Carneades 0.3b documentation</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -34,7 +34,7 @@
 <script type="text/javascript">
   var DOCUMENTATION_OPTIONS = {
             URL_ROOT:    '../../',
-            VERSION:     '0.2b',
+            VERSION:     '0.3b',
             COLLAPSE_INDEX: false,
             FILE_SUFFIX: '.html',
             HAS_SOURCE:  true
@@ -57,7 +57,7 @@
     });
   });
 </script>
-    <link rel="top" title="Carneades 0.2b documentation" href="../../index.html" />
+    <link rel="top" title="Carneades 0.3b documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -69,7 +69,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="../../index.html">Carneades 0.2b documentation</a>
+          <a class="brand" href="../../index.html">Carneades 0.3b documentation</a>
           <div class="nav-collapse collapse">
             <ul class="nav pull-right">
               
@@ -155,7 +155,7 @@
 <span class="c"># Author: Ewan Klein &lt;ewan@inf.ed.ac.uk&gt;</span>
 <span class="c"># Based on: https://hackage.haskell.org/package/CarneadesDSL</span>
 <span class="c">#</span>
-<span class="c"># For license information, see LICENSE.TXT</span>
+<span class="c"># For license information, see LICENSE</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">==========</span>
@@ -216,8 +216,6 @@
 <span class="sd">There is a :func:`draw` method which allows us to view the resulting graph.</span>
 
 <span class="sd">&gt;&gt;&gt; argset.draw() # doctest: +SKIP</span>
-<span class="sd">&gt;&gt;&gt; argset.draw(fname=&#39;argset.svg&#39;) # doctest: +SKIP</span>
-<span class="sd">&gt;&gt;&gt; argset.draw()</span>
 
 <span class="sd">Proof Standards</span>
 <span class="sd">===============</span>
@@ -312,10 +310,10 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">igraph</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.tracecalls</span> <span class="kn">import</span> <span class="n">TraceCalls</span>
+<span class="kn">from</span> <span class="nn">caes.tracecalls</span> <span class="kn">import</span> <span class="n">TraceCalls</span>
 
 <span class="n">LOGLEVEL</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
-<span class="c"># Uncomment the following line to turn off debug messages</span>
+<span class="c"># Uncomment the following line to raise the logging level and thereby turn off debug messages</span>
 <span class="c">#LOGLEVEL = logging.INFO</span>
 
 
@@ -745,10 +743,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_applicable</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>    
 
 
-</div></div>
-<span class="n">DOCTEST</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="arg_test"><a class="viewcode-back" href="../../api/index.html#caes.caes.arg_test">[docs]</a><span class="k">def</span> <span class="nf">arg_test</span><span class="p">():</span>
+</div></div>
+<div class="viewcode-block" id="arg_demo"><a class="viewcode-back" href="../../api/index.html#caes.caes.arg_demo">[docs]</a><span class="k">def</span> <span class="nf">arg_demo</span><span class="p">():</span>
     <span class="n">kill</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;kill&#39;</span><span class="p">)</span>
     <span class="n">intent</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;intent&#39;</span><span class="p">)</span>
     <span class="n">neg_intent</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span>
@@ -760,19 +757,15 @@
 
     <span class="n">ps</span> <span class="o">=</span> <span class="n">ProofStandard</span><span class="p">([(</span><span class="n">intent</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">)],</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">)</span>
 
-    <span class="n">arg1</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">murder</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">intent</span><span class="p">},</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg1&#39;</span><span class="p">)</span>
-    <span class="n">arg2</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness1</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable1</span><span class="p">},</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg2&#39;</span><span class="p">)</span>
-    <span class="n">arg3</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness2</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable2</span><span class="p">},</span> <span class="n">arg_id</span><span class="o">=</span><span class="s">&#39;arg3&#39;</span><span class="p">)</span>
+    <span class="n">arg1</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">murder</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">intent</span><span class="p">})</span>
+    <span class="n">arg2</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness1</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable1</span><span class="p">})</span>
+    <span class="n">arg3</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">neg_intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness2</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable2</span><span class="p">})</span>
 
     <span class="n">argset</span> <span class="o">=</span> <span class="n">ArgumentSet</span><span class="p">()</span>
     <span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span>
     <span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg2</span><span class="p">)</span>
     <span class="n">argset</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg3</span><span class="p">)</span>
-    <span class="n">argset</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-    <span class="c">#for arg in argset.get_arguments(intent): </span>
-        <span class="c">#print(arg)</span>
-
+    <span class="n">argset</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 
     <span class="n">assumptions</span> <span class="o">=</span> <span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">witness1</span><span class="p">,</span> <span class="n">witness2</span><span class="p">,</span> <span class="n">unreliable2</span><span class="p">}</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;arg1&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;arg2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s">&#39;arg3&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}</span>
@@ -780,36 +773,17 @@
     <span class="n">caes</span> <span class="o">=</span> <span class="n">CAES</span><span class="p">(</span><span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>    
     <span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">murder</span><span class="p">)</span>
     <span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">murder</span><span class="o">.</span><span class="n">negate</span><span class="p">())</span>
+
 </div>
-<div class="viewcode-block" id="graph_test"><a class="viewcode-back" href="../../api/index.html#caes.caes.graph_test">[docs]</a><span class="k">def</span> <span class="nf">graph_test</span><span class="p">():</span>
+<span class="n">DOCTEST</span> <span class="o">=</span> <span class="bp">False</span>
 
-    <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">to_directed</span><span class="p">()</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;kill&#39;</span><span class="p">)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;intent&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;murder&#39;</span><span class="p">)</span>
-
-    <span class="n">g</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;prop&#39;</span><span class="p">]</span>
-
-    <span class="n">g</span><span class="o">.</span><span class="n">add_edges</span><span class="p">([(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">es</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;arg1&#39;</span><span class="p">,</span> <span class="s">&#39;arg2&#39;</span><span class="p">]</span>
-    <span class="n">g</span><span class="o">.</span><span class="n">es</span><span class="p">[</span><span class="s">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">es</span><span class="p">[</span><span class="s">&#39;arg&#39;</span><span class="p">]</span>
-    <span class="n">props</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="s">&#39;prop&#39;</span><span class="p">]]</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
-    <span class="n">layout</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">layout_grid</span><span class="p">()</span>
-    <span class="n">layout</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">layout_auto</span><span class="p">()</span>
-    <span class="n">plot</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">,</span> <span class="n">vertex_label_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">vertex_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vertex_label_dist</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-</div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">DOCTEST</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">doctest</span>
         <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">(</span><span class="n">optionflags</span><span class="o">=</span><span class="n">doctest</span><span class="o">.</span><span class="n">NORMALIZE_WHITESPACE</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">arg_test</span><span class="p">()</span>
+        <span class="n">arg_demo</span><span class="p">()</span>
 </pre></div>
 
                 </div>
@@ -829,7 +803,7 @@
       
         <li><a href="../../genindex.html" title="General Index" >index</a></li>
         <li><a href="../../py-modindex.html" title="Python Module Index" >modules</a></li>
-        <li><a href="../../index.html">Carneades 0.2b documentation</a></li>
+        <li><a href="../../index.html">Carneades 0.3b documentation</a></li>
         <li><a href="../index.html" >Module code</a></li> 
       
     </ul>
