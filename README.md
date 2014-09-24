@@ -16,7 +16,7 @@ This is a pedagogically-oriented attempt to implement aspects of the [Carneades 
 * Install `python3.4` (via apt/homebrew/$package_system)
 
 Note for Linux users (especially Ubuntu 12.04 users): follow this
-[link](#install-python3.4) to have more info about installing the
+[link](#install-python34) to have more info about installing the
 python distro.
 
 * create a virtualenv:
