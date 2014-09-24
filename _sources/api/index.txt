@@ -1,20 +1,20 @@
-caes package
-============
+carneades package
+=================
 
 
-caes.caes module
-----------------
+carneades.caes module
+---------------------
 
-.. automodule:: caes.caes
+.. automodule:: carneades.caes
     :members:
     :undoc-members:
     :special-members: __init__
 
 
-caes.tracecalls module
-----------------------
+carneades.tracecalls module
+---------------------------
 
-.. automodule:: caes.tracecalls
+.. automodule:: carneades.tracecalls
     :members:
     :undoc-members:
     :show-inheritance:
