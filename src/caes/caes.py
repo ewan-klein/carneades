@@ -4,7 +4,7 @@
 # Author: Ewan Klein <ewan@inf.ed.ac.uk>
 # Based on: https://hackage.haskell.org/package/CarneadesDSL
 #
-# For license information, see LICENSE.TXT
+# For license information, see LICENSE
 
 """
 ==========
@@ -593,9 +593,8 @@ class CAES(object):
 
 
 
-DOCTEST = 1
 
-def arg_test():
+def arg_demo():
     kill = PropLiteral('kill')
     intent = PropLiteral('intent')
     neg_intent = intent.negate()
@@ -607,19 +606,15 @@ def arg_test():
 
     ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
 
-    arg1 = Argument(murder, premises={kill, intent}, arg_id='arg1')
-    arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1}, arg_id='arg2')
-    arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2}, arg_id='arg3')
+    arg1 = Argument(murder, premises={kill, intent})
+    arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
+    arg3 = Argument(neg_intent, premises={witness2}, exceptions={unreliable2})
 
     argset = ArgumentSet()
     argset.add_argument(arg1)
     argset.add_argument(arg2)
     argset.add_argument(arg3)
-    argset.draw(debug=True)
-
-    #for arg in argset.get_arguments(intent): 
-        #print(arg)
-
+    argset.draw()
 
     assumptions = {kill, witness1, witness2, unreliable2}
     weights = {'arg1': 0.8, 'arg2': 0.3, 'arg3': 0.8}
@@ -628,27 +623,8 @@ def arg_test():
     caes.acceptable(murder)
     caes.acceptable(murder.negate())
 
-def graph_test():
 
-    g = Graph()
-    g.to_directed()
-    a = PropLiteral('kill')
-    b = PropLiteral('intent', False)
-    c = PropLiteral('murder')
-
-    g.add_vertex(prop=a)
-    g.add_vertex(prop=b)
-    g.add_vertex(prop=c)
-    g.vs['label'] = g.vs['prop']
-
-    g.add_edges([(2, 0), (2, 1)])
-    g.es['arg'] = ['arg1', 'arg2']
-    g.es['label'] = g.es['arg']
-    props = [p for p in g.vs['prop']]
-    print(props)
-    layout = g.layout_grid()
-    layout = g.layout_auto()
-    plot(g, layout=layout, vertex_label_size=16, vertex_size=8, vertex_label_dist=-5, margin=30)
+DOCTEST = False
 
 if __name__ == '__main__':
 
@@ -656,4 +632,4 @@ if __name__ == '__main__':
         import doctest
         doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
     else:
-        arg_test()
+        arg_demo()
