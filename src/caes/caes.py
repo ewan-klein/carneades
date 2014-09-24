@@ -159,7 +159,11 @@ False
 from collections import namedtuple
 import logging
 from igraph import *
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from caes.tracecalls import TraceCalls
+
 
 LOGLEVEL = logging.DEBUG
 # Uncomment the following line to raise the logging level and thereby turn off debug messages
