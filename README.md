@@ -43,7 +43,7 @@ $ cd carneades
 * Generate the documentation
 ```
 $ cd doc
-$ make install
+$ make html
 ```
 
 * Test the software
