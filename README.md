@@ -68,7 +68,7 @@ $ tar xvf pycairo-1.10.0.tar.bz2
 $ cd pycairo-1.10.0/
 ```
 
-* edit a file in the hidden .waf folder that the extraction has created. To do this, go into the folder and edit ./war<numbers>/waflib/Tools/python.py to call the python3.4-config directly.
+* edit a file in the hidden .waf folder that the extraction has created (e.g. `./.waf-1.6.4-e3c1e08604b18a10567cfcd2d02eb6e6`. To do this, go into the folder and edit `./.waf-1.6.4-somenumbers/waflib/Tools/python.py` to call the python3.4-config directly.
 ```diff
     --- waflib/Tools/python.py.old  2014-08-01 14:36:23.750613874 +0000
     +++ waflib/Tools/python.py      2014-08-01 14:36:38.359627761 +0000
