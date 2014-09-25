@@ -6,7 +6,7 @@ This is a pedagogically-oriented attempt to implement aspects of the [Carneades 
 
 * Python3.4
 * igraph
-* pycairo
+* pycairo (for igraph)
 * Virtualenv (Optional)
 * Sphinx (docs only)
 * Basicstrap theme for sphinx (docs only)
@@ -59,8 +59,6 @@ On Ubuntu, check this [package](http://packages.ubuntu.com/search?keywords=pytho
 
 If you are using a virtualenv or you don't use ubuntu, do the following:
 
-* Create a virtualenv for python 3.4 and activate it
-
 * Download and extract the pycairo package in the virtualenv
 
 ```bash
@@ -84,7 +82,7 @@ $ cd pycairo-1.10.0/
                             if incstr not in includes:
 ```
 
-* compile the package
+* compile and install the package
 
 ```bash
 $ ./waf configure --prefix=$VIRTUAL_ENV
