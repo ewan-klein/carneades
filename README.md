@@ -13,7 +13,7 @@ This is a pedagogically-oriented attempt to implement aspects of the [Carneades 
 
 ## Installation
 
-### Install `python3.4` (via apt/homebrew/$package_system)
+### Install `python3.4` (via apt, homebrew or your favourite $package_system)
 
 Note for Linux users (especially Ubuntu 12.04 users): follow this
 [link](#install-python34) to have more info about installing the
