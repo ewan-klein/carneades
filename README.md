@@ -126,7 +126,7 @@ passages.
 so do it at your own risk or set up a VM*
 
 Unless you want to build from source (In which case, kudos!), add
-[this PPA](https://launchpad.net/~fkrull/+archive/ubuntu/deadsnakes)),
+[this PPA](https://launchpad.net/~fkrull/+archive/ubuntu/deadsnakes)
 to your apt source list:
 
 ```bash
