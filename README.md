@@ -13,7 +13,7 @@ This is a pedagogically-oriented attempt to implement aspects of the [Carneades 
 
 ## Installation
 
-### Install `python3.4` (via apt, homebrew or your favourite $package_system)
+### Install `python3.4` (via apt, homebrew or your favourite package_system)
 
 Note for Linux users (especially Ubuntu 12.04 users): follow this
 [link](#install-python34) to have more info about installing the
@@ -39,7 +39,8 @@ $ pip install sphinxjp.themes.basicstrap
 $ pip install python-igraph
 ```
 
-This should also install the C bindings. If that doesn't happen because of some error, it's like one of those problems:
+This should also install the C bindings. If that doesn't happen because of some error, it's likely to be one of the 
+following problems:
 
 * The header files for the python distribution are not installed. Look up `python-dev` or `python3.4-dev`
 
@@ -57,7 +58,7 @@ $ make install
 
 On Ubuntu, check this [package](http://packages.ubuntu.com/search?keywords=python-cairo).
 
-If you are using a virtualenv or you don't use ubuntu, do the following:
+If you are using a virtualenv or you don't use Ubuntu, do the following:
 
 * Download and extract the pycairo package in the virtualenv
 
@@ -121,7 +122,7 @@ distributions should do more or less the same. If you have a newer
 installation of Ubuntu or derivatives, you can probably skip some
 passages.
 
-*WARNING: although unlikely it might break your python2 installation,
+*WARNING: Although unlikely, this might break your python2 installation,
 so do it at your own risk or set up a VM*
 
 Unless you want to build from source (In which case, kudos!), add
