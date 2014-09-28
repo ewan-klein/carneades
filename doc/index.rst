@@ -11,7 +11,7 @@ Henrik Nilsson, especially `this detailed code
 (also available in a more readable LaTeX-ed :download:`PDF
 <CarneadesDSL.pdf>` version).
 
-For more detailed module documentation, see the `API documentation <api/index>`_.
+For more detailed module documentation, see the `API documentation <api/index.html>`_.
 
 The main module ``caes.py`` uses the ``igraph`` package for
 representing dependencies between arguments. For documentation, see

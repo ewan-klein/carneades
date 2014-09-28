@@ -256,6 +256,14 @@ class Argument(object):
 
 
     def __str__(self):
+        """
+        Define print string for arguments. 
+        
+        We follow similar conventions to those used by the CarneadesDSL
+        Haskell implementation.
+        
+        Premises and exceptions are sorted to facilitate doctest comparison.
+        """
         if len(self.premises) == 0:
             prems = "[]"
         else:
@@ -271,7 +279,7 @@ class ArgumentSet(object):
     """
     An ``ArgumentSet`` is modeled as a dependency graph where vertices represent
     the components of an argument. A vertex corresponding to the conclusion
-    of an argument *A* will depend on the premises and exceptions in *A*.
+    of an argument *A* will **depend on** the premises and exceptions in *A*.
     """
     def __init__(self):
         self.graph = Graph()
@@ -283,6 +291,10 @@ class ArgumentSet(object):
         """
         The set of :class:`PropLiteral`\ s represented by the vertices in
         the graph.
+        
+        Retrieving this set relies on the fact that :meth:`add_proposition`
+        sets a value for the ``prop`` attribute in vertices created when a
+        new proposition is added to the graph.
         """
         g = self.graph
         props = set()
@@ -296,10 +308,10 @@ class ArgumentSet(object):
         """
         Add a proposition to a graph if it is not already present as a vertex.
 
-        :param prop: The proposition to be added to the graph.
-        :type prop: :class:`PropLiteral`
+        :param proposition: The proposition to be added to the graph.
+        :type proposition: :class:`PropLiteral`
         :return: The graph vertex corresponding to the proposition.
-        :rtype: :class:`PropLiteral`
+        :rtype: :class:`Graph.Vertex`
         :raises TypeError: if the input is not a :class:`PropLiteral`.
         """
         if isinstance(proposition, PropLiteral):
@@ -319,6 +331,8 @@ class ArgumentSet(object):
 
         :parameter argument: The argument to be added to the graph.
         :type argument: :class:`Argument`
+        :parameter arg_id: The ID of the argument
+        :type arg_id: str or None
         """
         g = self.graph
         if arg_id is not None:
@@ -353,6 +367,7 @@ class ArgumentSet(object):
         :type proposition: :class:`PropLiteral`
         :return: A list of the arguments pro the proposition
         :rtype: list(:class:`Argument`)
+        :raises ValueError: if the input :class:`PropLiteral` isn't present in the graph.
         """
         g = self.graph
 
@@ -431,8 +446,21 @@ class ArgumentSet(object):
 class ProofStandard(object):
     """
     Each proposition in a CAES is associated with a proof standard.
+    
+    A proof standard is initialised by supplying a (possibly empty) list of
+    pairs, each consisting of a proposition and the name of a proof standard.
+    
+    >>> intent = PropLiteral('intent')
+    >>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")])
+    
+    Possible values for proof standards: `"scintilla"`, `"preponderance"`,
+    `"clear_and_convincing"`, `"beyond_reasonable_doubt"`, and `"dialectical_validity"`.
     """
     def __init__(self, propstandards, default='scintilla'):
+        """
+        :param propstandards: the proof standard associated with each proposition under consideration.
+        :type propstandards: list(tuple(:class:`PropLiteral`, str))
+        """
         self.proof_standards = ["scintilla", "preponderance",
                                 "clear_and_convincing", "beyond_reasonable_doubt",
                                 "dialectical_validity"]
@@ -447,14 +475,26 @@ class ProofStandard(object):
             self.config[prop] = standard
 
 
-    def assign_standard(self, prop):
-        return self.config[prop]
+    def assign_standard(self, proposition):
+        """
+        Determine the proof standard associated with a proposition.
+        
+        :param proposition: The proposition to be checked.
+        :type proposition: :class:`PropLiteral`
+        """
+        return self.config[proposition]
 
 
 Audience = namedtuple('Audience', ['assumptions', 'weight'])
 """
 An audience has assumptions about which premises hold and also
 assigns weights to arguments.
+
+:param assumptions: The assumptions held by the audience
+:type assumptions: set(:class:`PropLiteral`)
+
+:param weights: An mapping from :class:`Argument`\ s to weights.
+:type weights: dict
 """
 
 
@@ -467,10 +507,31 @@ class CAES(object):
     def __init__(self, argset, audience, proofstandard, alpha=0.4, beta=0.3,
                  gamma=0.2):
         """
-
+        :parameter argset: the argument set used in the CAES
         :type argset: :class:`ArgSet`
+        
+        :parameter audience: the audience for the CAES        
         :type audience: :class:`Audience`
-        :type standard: :class:`ProofStandard`
+        
+        :parameter proofstandard: the proof standards used in the CAES        
+        :type proofstandard: :class:`ProofStandard`
+        
+        :parameter alpha: threshold of strength of argument required for a proposition\
+        to reach the proof standards "clear and convincing" and "beyond reasonable doubt".
+        
+        :type alpha: float in interval [0, 1]
+        
+        
+        :parameter beta: difference required between strength of\
+        argument *pro* a proposition vs strength of argument *con*\
+        to reach the proof standard "clear and convincing".
+        
+        :type beta: float in interval [0, 1]
+        
+        :parameter gamma: threshold of strength of a *con* argument required for a proposition\
+        to reach the proof standard "beyond reasonable doubt".
+        
+        :type gamma: float in interval [0, 1]
         """
         self.argset = argset
         self.assumptions = audience.assumptions
@@ -482,6 +543,10 @@ class CAES(object):
 
 
     def get_all_arguments(self):
+        """
+        Show all arguments in the :class:`ArgSet` of the CAES.
+        
+        """
         for arg in self.argset.arguments:
             print(arg)
 
@@ -524,6 +589,11 @@ class CAES(object):
         """
         A conclusion is *acceptable* in a CAES if it can be arrived at under
         the relevant proof standards, given the beliefs of the audience.
+        
+        :param proposition: The conclusion whose acceptability is to be determined.
+        :type proposition: :class:`PropLiteral`
+        
+        :rtype: bool
         """
 
         standard = self.standard.assign_standard(proposition)
@@ -532,6 +602,19 @@ class CAES(object):
 
     @TraceCalls()
     def meets_proof_standard(self, proposition, standard):
+        """
+        Determine whether a proposition meets a given proof standard.
+        
+        
+        :param proposition: The proposition which should meet the relevant proof standard.
+        :type proposition: :class:`PropLiteral`
+        
+        :parameter standard: a specific level of proof; see :class:`ProofStandard` for admissible values
+        
+        :type standard: str
+        :rtype: bool
+        
+        """
         arguments = self.argset.get_arguments(proposition)
 
         result = False
@@ -560,6 +643,14 @@ class CAES(object):
         return result        
 
     def weight_of(self, argument):
+        """
+        Retrieve the weight associated by the CAES audience with an argument.
+        
+        :parameter argument: The argument whose weight is being determined.
+        :type argument: :class:`Argument`
+        :return: The weight of the argument.
+        :rtype: float in interval [0, 1]
+        """
         arg_id = argument.arg_id
         try:
             return self.weight[arg_id]            
@@ -569,10 +660,13 @@ class CAES(object):
 
     def max_weight_applicable(self, arguments):
         """
+        Retrieve the weight of the strongest applicable argument in a list
+        of arguments.
+        
         :parameter arguments: The arguments whose weight is being compared.
         :type arguments: list(:class:`Argument`)
         :return: The maximum of the weights of the arguments.
-        :rtype: int
+        :rtype: float in interval [0, 1]
         """
         arg_ids = [arg.arg_id for arg in arguments]
 
@@ -588,10 +682,24 @@ class CAES(object):
         return max(weights)
 
     def max_weight_pro(self, proposition):
+        """
+        The maximum of the weights pro the proposition.
+        
+        :param proposition: The conclusion whose acceptability is to be determined.
+        :type proposition: :class:`PropLiteral`        
+        :rtype: float in interval [0, 1]
+        """
         args = self.argset.get_arguments(proposition)
         return self.max_weight_applicable(args)
 
     def max_weight_con(self, proposition):
+        """
+        The maximum of the weights con the proposition.
+        
+        :param proposition: The conclusion whose acceptability is to be determined.
+        :type proposition: :class:`PropLiteral`        
+        :rtype: float in interval [0, 1]
+        """        
         con = proposition.negate()
         args = self.argset.get_arguments(con)
         return self.max_weight_applicable(args)    
@@ -600,6 +708,11 @@ class CAES(object):
 
 
 def arg_demo():
+    """
+    Demo of how to initialise and call methods of a CAES.
+    
+    """
+    
     kill = PropLiteral('kill')
     intent = PropLiteral('intent')
     neg_intent = intent.negate()
@@ -609,7 +722,7 @@ def arg_demo():
     witness2 = PropLiteral('witness2')
     unreliable2 = PropLiteral('unreliable2')
 
-    ps = ProofStandard([(intent, "beyond_reasonable_doubt")], default='scintilla')
+    ps = ProofStandard([(intent, "beyond_reasonable_doubt")])
 
     arg1 = Argument(murder, premises={kill, intent})
     arg2 = Argument(intent, premises={witness1}, exceptions={unreliable1})
@@ -629,7 +742,7 @@ def arg_demo():
     caes.acceptable(murder.negate())
 
 
-DOCTEST = False
+DOCTEST = True
 
 if __name__ == '__main__':
 
