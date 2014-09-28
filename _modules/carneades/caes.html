@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     
-    <title>caes.caes &mdash; Carneades 0.4b documentation</title>
+    <title>carneades.caes &mdash; Carneades 0.4b documentation</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -148,7 +148,7 @@
               <div class="bodywrapper">
                 <div class="body">
                   
-  <h1>Source code for caes.caes</h1><div class="highlight"><pre>
+  <h1>Source code for carneades.caes</h1><div class="highlight"><pre>
 <span class="c"># Carneades Argument Evaluation Structure</span>
 <span class="c"># </span>
 <span class="c"># Copyright (C) 2014 Ewan Klein</span>
@@ -310,7 +310,12 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">igraph</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">caes.tracecalls</span> <span class="kn">import</span> <span class="n">TraceCalls</span>
+
+<span class="c"># fix to ensure that package is loaded properly on system path</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;..&#39;</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">carneades.tracecalls</span> <span class="kn">import</span> <span class="n">TraceCalls</span>
+
 
 <span class="n">LOGLEVEL</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
 <span class="c"># Uncomment the following line to raise the logging level and thereby turn off debug messages</span>
@@ -319,7 +324,7 @@
 
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(levelname)s</span><span class="s">: </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">LOGLEVEL</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PropLiteral"><a class="viewcode-back" href="../../api/index.html#caes.caes.PropLiteral">[docs]</a><span class="k">class</span> <span class="nc">PropLiteral</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="PropLiteral"><a class="viewcode-back" href="../../api/index.html#carneades.caes.PropLiteral">[docs]</a><span class="k">class</span> <span class="nc">PropLiteral</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Proposition literals have most of the properties of ordinary strings,</span>
 <span class="sd">    except that the negation method is Boolean; i.e. </span>
@@ -328,7 +333,7 @@
 <span class="sd">    &gt;&gt;&gt; a.negate().negate() == a</span>
 <span class="sd">    True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="PropLiteral.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.PropLiteral.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">polarity</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="PropLiteral.__init__"><a class="viewcode-back" href="../../api/index.html#carneades.caes.PropLiteral.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">polarity</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Propositions are either positive or negative atoms.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -336,7 +341,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_string</span> <span class="o">=</span> <span class="n">string</span>
 
 </div>
-<div class="viewcode-block" id="PropLiteral.negate"><a class="viewcode-back" href="../../api/index.html#caes.caes.PropLiteral.negate">[docs]</a>    <span class="k">def</span> <span class="nf">negate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PropLiteral.negate"><a class="viewcode-back" href="../../api/index.html#carneades.caes.PropLiteral.negate">[docs]</a>    <span class="k">def</span> <span class="nf">negate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Negation of a proposition.</span>
 
@@ -377,7 +382,7 @@
 
 
 </div>
-<div class="viewcode-block" id="Argument"><a class="viewcode-back" href="../../api/index.html#caes.caes.Argument">[docs]</a><span class="k">class</span> <span class="nc">Argument</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Argument"><a class="viewcode-back" href="../../api/index.html#carneades.caes.Argument">[docs]</a><span class="k">class</span> <span class="nc">Argument</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An argument consists of a conclusion, a set of premises and a set of</span>
 <span class="sd">    exceptions (both of which can be empty).</span>
@@ -385,7 +390,7 @@
 <span class="sd">    Although arguments should have identifiers (`arg_id`), it is preferable to specify</span>
 <span class="sd">    these when calling the :meth:`add_argument` method of :class:`ArgumentSet`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Argument.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.Argument.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conclusion</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span> <span class="n">exceptions</span><span class="o">=</span><span class="nb">set</span><span class="p">()):</span>
+<div class="viewcode-block" id="Argument.__init__"><a class="viewcode-back" href="../../api/index.html#carneades.caes.Argument.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conclusion</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span> <span class="n">exceptions</span><span class="o">=</span><span class="nb">set</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;        </span>
 <span class="sd">        :param conclusion: The conclusion of the argument.</span>
 <span class="sd">        :type conclusion: :class:`PropLiteral`</span>
@@ -402,6 +407,14 @@
 
 </div>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define print string for arguments. </span>
+<span class="sd">        </span>
+<span class="sd">        We follow similar conventions to those used by the CarneadesDSL</span>
+<span class="sd">        Haskell implementation.</span>
+<span class="sd">        </span>
+<span class="sd">        Premises and exceptions are sorted to facilitate doctest comparison.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">premises</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">prems</span> <span class="o">=</span> <span class="s">&quot;[]&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -413,22 +426,26 @@
         <span class="k">return</span> <span class="s">&quot;{}, ~{} =&gt; {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prems</span><span class="p">,</span> <span class="n">excepts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conclusion</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="ArgumentSet"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet">[docs]</a><span class="k">class</span> <span class="nc">ArgumentSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentSet"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet">[docs]</a><span class="k">class</span> <span class="nc">ArgumentSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An ``ArgumentSet`` is modeled as a dependency graph where vertices represent</span>
 <span class="sd">    the components of an argument. A vertex corresponding to the conclusion</span>
-<span class="sd">    of an argument *A* will depend on the premises and exceptions in *A*.</span>
+<span class="sd">    of an argument *A* will **depend on** the premises and exceptions in *A*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ArgumentSet.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentSet.__init__"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">to_directed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arg_count</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[]</span>
 </div>
-<div class="viewcode-block" id="ArgumentSet.propset"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.propset">[docs]</a>    <span class="k">def</span> <span class="nf">propset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentSet.propset"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet.propset">[docs]</a>    <span class="k">def</span> <span class="nf">propset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The set of :class:`PropLiteral`\ s represented by the vertices in</span>
 <span class="sd">        the graph.</span>
+<span class="sd">        </span>
+<span class="sd">        Retrieving this set relies on the fact that :meth:`add_proposition`</span>
+<span class="sd">        sets a value for the ``prop`` attribute in vertices created when a</span>
+<span class="sd">        new proposition is added to the graph.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
         <span class="n">props</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -438,14 +455,14 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">props</span>
 </div>
-<div class="viewcode-block" id="ArgumentSet.add_proposition"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.add_proposition">[docs]</a>    <span class="k">def</span> <span class="nf">add_proposition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>        
+<div class="viewcode-block" id="ArgumentSet.add_proposition"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet.add_proposition">[docs]</a>    <span class="k">def</span> <span class="nf">add_proposition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>        
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a proposition to a graph if it is not already present as a vertex.</span>
 
-<span class="sd">        :param prop: The proposition to be added to the graph.</span>
-<span class="sd">        :type prop: :class:`PropLiteral`</span>
+<span class="sd">        :param proposition: The proposition to be added to the graph.</span>
+<span class="sd">        :type proposition: :class:`PropLiteral`</span>
 <span class="sd">        :return: The graph vertex corresponding to the proposition.</span>
-<span class="sd">        :rtype: :class:`PropLiteral`</span>
+<span class="sd">        :rtype: :class:`Graph.Vertex`</span>
 <span class="sd">        :raises TypeError: if the input is not a :class:`PropLiteral`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="n">PropLiteral</span><span class="p">):</span>
@@ -459,12 +476,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Input {} should be PropLiteral&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">proposition</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="ArgumentSet.add_argument"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.add_argument">[docs]</a>    <span class="k">def</span> <span class="nf">add_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">arg_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentSet.add_argument"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet.add_argument">[docs]</a>    <span class="k">def</span> <span class="nf">add_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">arg_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add an argument to the graph.</span>
 
 <span class="sd">        :parameter argument: The argument to be added to the graph.</span>
 <span class="sd">        :type argument: :class:`Argument`</span>
+<span class="sd">        :parameter arg_id: The ID of the argument</span>
+<span class="sd">        :type arg_id: str or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
         <span class="k">if</span> <span class="n">arg_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -491,7 +510,7 @@
         <span class="n">g</span><span class="o">.</span><span class="n">add_edges</span><span class="p">(</span><span class="n">edge_to_arg</span> <span class="o">+</span> <span class="n">edges_from_arg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="ArgumentSet.get_arguments"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.get_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentSet.get_arguments"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet.get_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the arguments for a proposition in an *ArgumentSet*.</span>
 
@@ -499,6 +518,7 @@
 <span class="sd">        :type proposition: :class:`PropLiteral`</span>
 <span class="sd">        :return: A list of the arguments pro the proposition</span>
 <span class="sd">        :rtype: list(:class:`Argument`)</span>
+<span class="sd">        :raises ValueError: if the input :class:`PropLiteral` isn&#39;t present in the graph.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
 
@@ -523,7 +543,7 @@
 
 
 </div>
-<div class="viewcode-block" id="ArgumentSet.draw"><a class="viewcode-back" href="../../api/index.html#caes.caes.ArgumentSet.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">roots</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentSet.draw"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">roots</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Visualise an :class:`ArgumentSet` as a labeled graph.</span>
 
@@ -574,11 +594,24 @@
 
 
 </div></div>
-<div class="viewcode-block" id="ProofStandard"><a class="viewcode-back" href="../../api/index.html#caes.caes.ProofStandard">[docs]</a><span class="k">class</span> <span class="nc">ProofStandard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ProofStandard"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ProofStandard">[docs]</a><span class="k">class</span> <span class="nc">ProofStandard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Each proposition in a CAES is associated with a proof standard.</span>
+<span class="sd">    </span>
+<span class="sd">    A proof standard is initialised by supplying a (possibly empty) list of</span>
+<span class="sd">    pairs, each consisting of a proposition and the name of a proof standard.</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; intent = PropLiteral(&#39;intent&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; ps = ProofStandard([(intent, &quot;beyond_reasonable_doubt&quot;)])</span>
+<span class="sd">    </span>
+<span class="sd">    Possible values for proof standards: `&quot;scintilla&quot;`, `&quot;preponderance&quot;`,</span>
+<span class="sd">    `&quot;clear_and_convincing&quot;`, `&quot;beyond_reasonable_doubt&quot;`, and `&quot;dialectical_validity&quot;`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ProofStandard.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.ProofStandard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">propstandards</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="ProofStandard.__init__"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ProofStandard.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">propstandards</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param propstandards: the proof standard associated with each proposition under consideration.</span>
+<span class="sd">        :type propstandards: list(tuple(:class:`PropLiteral`, str))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">proof_standards</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;scintilla&quot;</span><span class="p">,</span> <span class="s">&quot;preponderance&quot;</span><span class="p">,</span>
                                 <span class="s">&quot;clear_and_convincing&quot;</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">,</span>
                                 <span class="s">&quot;dialectical_validity&quot;</span><span class="p">]</span>
@@ -593,30 +626,63 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">=</span> <span class="n">standard</span>
 
 
-<div class="viewcode-block" id="ProofStandard.assign_standard"><a class="viewcode-back" href="../../api/index.html#caes.caes.ProofStandard.assign_standard">[docs]</a>    <span class="k">def</span> <span class="nf">assign_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span>
+<div class="viewcode-block" id="ProofStandard.assign_standard"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ProofStandard.assign_standard">[docs]</a>    <span class="k">def</span> <span class="nf">assign_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine the proof standard associated with a proposition.</span>
+<span class="sd">        </span>
+<span class="sd">        :param proposition: The proposition to be checked.</span>
+<span class="sd">        :type proposition: :class:`PropLiteral`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">proposition</span><span class="p">]</span>
 
 </div></div>
 <span class="n">Audience</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;Audience&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;assumptions&#39;</span><span class="p">,</span> <span class="s">&#39;weight&#39;</span><span class="p">])</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">An audience has assumptions about which premises hold and also</span>
 <span class="sd">assigns weights to arguments.</span>
+
+<span class="sd">:param assumptions: The assumptions held by the audience</span>
+<span class="sd">:type assumptions: set(:class:`PropLiteral`)</span>
+
+<span class="sd">:param weights: An mapping from :class:`Argument`\ s to weights.</span>
+<span class="sd">:type weights: dict</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
 
-<div class="viewcode-block" id="CAES"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES">[docs]</a><span class="k">class</span> <span class="nc">CAES</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES">[docs]</a><span class="k">class</span> <span class="nc">CAES</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class that represents a Carneades Argument Evaluation Structure (CAES).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CAES.__init__"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">proofstandard</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<div class="viewcode-block" id="CAES.__init__"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argset</span><span class="p">,</span> <span class="n">audience</span><span class="p">,</span> <span class="n">proofstandard</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
                  <span class="n">gamma</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="sd">        :parameter argset: the argument set used in the CAES</span>
 <span class="sd">        :type argset: :class:`ArgSet`</span>
+<span class="sd">        </span>
+<span class="sd">        :parameter audience: the audience for the CAES        </span>
 <span class="sd">        :type audience: :class:`Audience`</span>
-<span class="sd">        :type standard: :class:`ProofStandard`</span>
+<span class="sd">        </span>
+<span class="sd">        :parameter proofstandard: the proof standards used in the CAES        </span>
+<span class="sd">        :type proofstandard: :class:`ProofStandard`</span>
+<span class="sd">        </span>
+<span class="sd">        :parameter alpha: threshold of strength of argument required for a proposition\</span>
+<span class="sd">        to reach the proof standards &quot;clear and convincing&quot; and &quot;beyond reasonable doubt&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        :type alpha: float in interval [0, 1]</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        :parameter beta: difference required between strength of\</span>
+<span class="sd">        argument *pro* a proposition vs strength of argument *con*\</span>
+<span class="sd">        to reach the proof standard &quot;clear and convincing&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        :type beta: float in interval [0, 1]</span>
+<span class="sd">        </span>
+<span class="sd">        :parameter gamma: threshold of strength of a *con* argument required for a proposition\</span>
+<span class="sd">        to reach the proof standard &quot;beyond reasonable doubt&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        :type gamma: float in interval [0, 1]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">argset</span> <span class="o">=</span> <span class="n">argset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assumptions</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">assumptions</span>
@@ -627,12 +693,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
 
 </div>
-<div class="viewcode-block" id="CAES.get_all_arguments"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.get_all_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.get_all_arguments"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.get_all_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show all arguments in the :class:`ArgSet` of the CAES.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">arguments</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
 </div>
     <span class="nd">@TraceCalls</span><span class="p">()</span>    
-<div class="viewcode-block" id="CAES.applicable"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.applicable">[docs]</a>    <span class="k">def</span> <span class="nf">applicable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.applicable"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.applicable">[docs]</a>    <span class="k">def</span> <span class="nf">applicable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.</span>
 
@@ -666,10 +736,15 @@
 
 
     <span class="nd">@TraceCalls</span><span class="p">()</span>
-<div class="viewcode-block" id="CAES.acceptable"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.acceptable">[docs]</a>    <span class="k">def</span> <span class="nf">acceptable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.acceptable"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.acceptable">[docs]</a>    <span class="k">def</span> <span class="nf">acceptable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A conclusion is *acceptable* in a CAES if it can be arrived at under</span>
 <span class="sd">        the relevant proof standards, given the beliefs of the audience.</span>
+<span class="sd">        </span>
+<span class="sd">        :param proposition: The conclusion whose acceptability is to be determined.</span>
+<span class="sd">        :type proposition: :class:`PropLiteral`</span>
+<span class="sd">        </span>
+<span class="sd">        :rtype: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">standard</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard</span><span class="o">.</span><span class="n">assign_standard</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
@@ -677,7 +752,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">meets_proof_standard</span><span class="p">(</span><span class="n">proposition</span><span class="p">,</span> <span class="n">standard</span><span class="p">)</span>
 </div>
     <span class="nd">@TraceCalls</span><span class="p">()</span>
-<div class="viewcode-block" id="CAES.meets_proof_standard"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.meets_proof_standard">[docs]</a>    <span class="k">def</span> <span class="nf">meets_proof_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">,</span> <span class="n">standard</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.meets_proof_standard"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.meets_proof_standard">[docs]</a>    <span class="k">def</span> <span class="nf">meets_proof_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">,</span> <span class="n">standard</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine whether a proposition meets a given proof standard.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        :param proposition: The proposition which should meet the relevant proof standard.</span>
+<span class="sd">        :type proposition: :class:`PropLiteral`</span>
+<span class="sd">        </span>
+<span class="sd">        :parameter standard: a specific level of proof; see :class:`ProofStandard` for admissible values</span>
+<span class="sd">        </span>
+<span class="sd">        :type standard: str</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">False</span>
@@ -705,7 +793,15 @@
         <span class="c">#logging.debug(&quot;Proposition &#39;{}&#39; meets standard &#39;{}&#39;: {}&quot;.format(proposition, standard, result))</span>
         <span class="k">return</span> <span class="n">result</span>        
 </div>
-<div class="viewcode-block" id="CAES.weight_of"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.weight_of">[docs]</a>    <span class="k">def</span> <span class="nf">weight_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.weight_of"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.weight_of">[docs]</a>    <span class="k">def</span> <span class="nf">weight_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the weight associated by the CAES audience with an argument.</span>
+<span class="sd">        </span>
+<span class="sd">        :parameter argument: The argument whose weight is being determined.</span>
+<span class="sd">        :type argument: :class:`Argument`</span>
+<span class="sd">        :return: The weight of the argument.</span>
+<span class="sd">        :rtype: float in interval [0, 1]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">arg_id</span> <span class="o">=</span> <span class="n">argument</span><span class="o">.</span><span class="n">arg_id</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">arg_id</span><span class="p">]</span>            
@@ -713,12 +809,15 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;No weight assigned to argument &#39;{}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_id</span><span class="p">))</span>
 
 </div>
-<div class="viewcode-block" id="CAES.max_weight_applicable"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.max_weight_applicable">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_applicable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.max_weight_applicable"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.max_weight_applicable">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_applicable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve the weight of the strongest applicable argument in a list</span>
+<span class="sd">        of arguments.</span>
+<span class="sd">        </span>
 <span class="sd">        :parameter arguments: The arguments whose weight is being compared.</span>
 <span class="sd">        :type arguments: list(:class:`Argument`)</span>
 <span class="sd">        :return: The maximum of the weights of the arguments.</span>
-<span class="sd">        :rtype: int</span>
+<span class="sd">        :rtype: float in interval [0, 1]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">arg_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">arg_id</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">]</span>
 
@@ -733,11 +832,25 @@
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Weights of {} are {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">applic_arg_ids</span><span class="p">,</span> <span class="n">weights</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CAES.max_weight_pro"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.max_weight_pro">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_pro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.max_weight_pro"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.max_weight_pro">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_pro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The maximum of the weights pro the proposition.</span>
+<span class="sd">        </span>
+<span class="sd">        :param proposition: The conclusion whose acceptability is to be determined.</span>
+<span class="sd">        :type proposition: :class:`PropLiteral`        </span>
+<span class="sd">        :rtype: float in interval [0, 1]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">proposition</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_applicable</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="CAES.max_weight_con"><a class="viewcode-back" href="../../api/index.html#caes.caes.CAES.max_weight_con">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_con</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+<div class="viewcode-block" id="CAES.max_weight_con"><a class="viewcode-back" href="../../api/index.html#carneades.caes.CAES.max_weight_con">[docs]</a>    <span class="k">def</span> <span class="nf">max_weight_con</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proposition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The maximum of the weights con the proposition.</span>
+<span class="sd">        </span>
+<span class="sd">        :param proposition: The conclusion whose acceptability is to be determined.</span>
+<span class="sd">        :type proposition: :class:`PropLiteral`        </span>
+<span class="sd">        :rtype: float in interval [0, 1]</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
         <span class="n">con</span> <span class="o">=</span> <span class="n">proposition</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span>
         <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argset</span><span class="o">.</span><span class="n">get_arguments</span><span class="p">(</span><span class="n">con</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_weight_applicable</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>    
@@ -745,7 +858,12 @@
 
 
 </div></div>
-<div class="viewcode-block" id="arg_demo"><a class="viewcode-back" href="../../api/index.html#caes.caes.arg_demo">[docs]</a><span class="k">def</span> <span class="nf">arg_demo</span><span class="p">():</span>
+<div class="viewcode-block" id="arg_demo"><a class="viewcode-back" href="../../api/index.html#carneades.caes.arg_demo">[docs]</a><span class="k">def</span> <span class="nf">arg_demo</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Demo of how to initialise and call methods of a CAES.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="n">kill</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;kill&#39;</span><span class="p">)</span>
     <span class="n">intent</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;intent&#39;</span><span class="p">)</span>
     <span class="n">neg_intent</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">negate</span><span class="p">()</span>
@@ -755,7 +873,7 @@
     <span class="n">witness2</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;witness2&#39;</span><span class="p">)</span>
     <span class="n">unreliable2</span> <span class="o">=</span> <span class="n">PropLiteral</span><span class="p">(</span><span class="s">&#39;unreliable2&#39;</span><span class="p">)</span>
 
-    <span class="n">ps</span> <span class="o">=</span> <span class="n">ProofStandard</span><span class="p">([(</span><span class="n">intent</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">)],</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;scintilla&#39;</span><span class="p">)</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">ProofStandard</span><span class="p">([(</span><span class="n">intent</span><span class="p">,</span> <span class="s">&quot;beyond_reasonable_doubt&quot;</span><span class="p">)])</span>
 
     <span class="n">arg1</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">murder</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">kill</span><span class="p">,</span> <span class="n">intent</span><span class="p">})</span>
     <span class="n">arg2</span> <span class="o">=</span> <span class="n">Argument</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="n">premises</span><span class="o">=</span><span class="p">{</span><span class="n">witness1</span><span class="p">},</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">{</span><span class="n">unreliable1</span><span class="p">})</span>
@@ -775,7 +893,7 @@
     <span class="n">caes</span><span class="o">.</span><span class="n">acceptable</span><span class="p">(</span><span class="n">murder</span><span class="o">.</span><span class="n">negate</span><span class="p">())</span>
 
 </div>
-<span class="n">DOCTEST</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">DOCTEST</span> <span class="o">=</span> <span class="bp">True</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
 

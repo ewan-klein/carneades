@@ -17,6 +17,6 @@ carneades.tracecalls module
 .. automodule:: carneades.tracecalls
     :members:
     :undoc-members:
-    :show-inheritance:
+    :special-members: __init__
 
 

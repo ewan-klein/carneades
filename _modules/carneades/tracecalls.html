@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     
-    <title>caes.tracecalls &mdash; Carneades 0.4b documentation</title>
+    <title>carneades.tracecalls &mdash; Carneades 0.4b documentation</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -148,7 +148,7 @@
               <div class="bodywrapper">
                 <div class="body">
                   
-  <h1>Source code for caes.tracecalls</h1><div class="highlight"><pre>
+  <h1>Source code for carneades.tracecalls</h1><div class="highlight"><pre>
 <span class="c"># Author: Eli Bendersky &lt;eliben@gmail.com&gt;</span>
 <span class="c">#         Ewan Klein &lt;ewan@inf.ed.ac.uk&gt; (modifications)</span>
 <span class="c">#</span>
@@ -160,25 +160,31 @@
 <span class="sd">and return values, when executing algorithms with complex function call</span>
 <span class="sd">sequences, and especially ones that require recursion.</span>
 
-<span class="sd">The class :class:`TraceCalls` is called as decorator :func:`@TraceCalls`.</span>
+<span class="sd">The class :class:`TraceCalls` is called as a decorator :func:`@TraceCalls`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<div class="viewcode-block" id="TraceCalls"><a class="viewcode-back" href="../../api/index.html#caes.tracecalls.TraceCalls">[docs]</a><span class="k">class</span> <span class="nc">TraceCalls</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TraceCalls"><a class="viewcode-back" href="../../api/index.html#carneades.tracecalls.TraceCalls">[docs]</a><span class="k">class</span> <span class="nc">TraceCalls</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Use as a decorator on functions that should be traced. Several functions</span>
-<span class="sd">    can be decorated - they will all be indented according to their call</span>
+<span class="sd">    can be decorated; they will all be indented according to their call</span>
 <span class="sd">    depth.</span>
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">indent_step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">show_ret</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="TraceCalls.__init__"><a class="viewcode-back" href="../../api/index.html#carneades.tracecalls.TraceCalls.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">indent_step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">show_ret</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param stream: The output stream</span>
+<span class="sd">        :param indent_step: How much to indent strings relative to call depth.</span>
+<span class="sd">        :type indent_step: int</span>
+<span class="sd">        :param show_ret: If ``True``, show the return value of the function call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indent_step</span> <span class="o">=</span> <span class="n">indent_step</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_ret</span> <span class="o">=</span> <span class="n">show_ret</span>
         <span class="n">TraceCalls</span><span class="o">.</span><span class="n">cur_indent</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
-
+</div>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
