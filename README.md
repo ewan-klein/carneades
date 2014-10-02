@@ -2,7 +2,13 @@
 
 This is a pedagogically-oriented attempt to implement aspects of the [Carneades Argument Evaluation framework](http://carneades.github.io/carneades/Carneades/).  It closely follows the Haskell implementation in the [CarneadesDSL package](https://hackage.haskell.org/package/CarneadesDSL).
 
-## Requirements
+The libraries needed to run this code on DICE are already available, except that the plotting functionality is currently not supported. 
+
+If you want to install the necessary libraries on your own machine, however, read on.
+
+## Installing the libraries for the Python Carneades implementation on your own computer
+
+### Requirements
 
 * Python3.4
 * igraph
@@ -11,29 +17,29 @@ This is a pedagogically-oriented attempt to implement aspects of the [Carneades 
 * Sphinx (docs only)
 * Basicstrap theme for sphinx (docs only)
 
-## Installation
+### Installation
 
-### Install `python3.4` (via apt, homebrew or your favourite package_system)
+#### Install `python3.4` (via apt, homebrew or your favourite package_system)
 
 Note for Linux users (especially Ubuntu 12.04 users): follow this
 [link](#install-python34) to have more info about installing the
 python distro.
 
-### Create a virtualenv:
+#### Create a virtualenv:
 
 ```bash
 $ virtualenv -p python3.4 envname
 $ source /envname/bin/activate
 ```
 
-### Install sphinx and basicstrap
+#### Install sphinx and basicstrap
 
 ```bash
 $ pip install sphinx
 $ pip install sphinxjp.themes.basicstrap
 ```
 
-### Install igraph
+#### Install igraph
 
 ```bash
 $ pip install python-igraph
@@ -54,7 +60,7 @@ $ make
 $ make install
 ```
 
-### Install pycairo
+#### Install pycairo
 
 On Ubuntu, check this [package](http://packages.ubuntu.com/search?keywords=python-cairo).
 
@@ -98,21 +104,21 @@ $ git clone https://github.com/ewan-klein/carneades.git
 $ cd carneades
 ```
 
-### Generate the documentation
+#### Generate the documentation
 
 ```bash
 $ cd doc
 $ make html
 ```
 
-### Test the software
+#### Test the software
 
 ```bash
 $ cd ../src # relative root is carneades/
 $ python -i caes.py
 ```
 
-## Install python3.4
+### Install python3.4
 
 (Linux users)
 -------------
