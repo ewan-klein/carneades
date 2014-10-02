@@ -2,11 +2,11 @@
 
 This is a pedagogically-oriented attempt to implement aspects of the [Carneades Argument Evaluation framework](http://carneades.github.io/carneades/Carneades/).  It closely follows the Haskell implementation in the [CarneadesDSL package](https://hackage.haskell.org/package/CarneadesDSL).
 
-The libraries needed to run this code on DICE are already available, except that the plotting functionality is currently not supported. 
+The libraries needed to run this code on DICE are already available (except that the plotting functionality is currently not supported). So if you are happy to work on DICE, you are ready to go.
 
 If you want to install the necessary libraries on your own machine, however, read on.
 
-## Installing the libraries for the Python Carneades implementation on your own computer
+## Installing the libraries for the Carneades sample code on your own computer
 
 ### Requirements
 
