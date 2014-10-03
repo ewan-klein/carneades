@@ -2,7 +2,7 @@
 
 This is a pedagogically-oriented attempt to implement aspects of the [Carneades Argument Evaluation framework](http://carneades.github.io/carneades/Carneades/).  It closely follows the Haskell implementation in the [CarneadesDSL package](https://hackage.haskell.org/package/CarneadesDSL).
 
-The libraries needed to run this code on DICE are already available (except that the plotting functionality is currently not supported). Just remember that you need to explicitly use ``python3.4`` since the default on DICE is ``python2.7``. So if you are happy to work on DICE, you are ready to go. :smile:
+The libraries needed to run this code on DICE are already available (except that the plotting functionality is currently not supported). Just remember that you need to explicitly call ``python3.4`` since the ``python`` command  on DICE defaults to ``python2.7``. So if you are happy to work on DICE, you are ready to go. :smile:
 
 
 
