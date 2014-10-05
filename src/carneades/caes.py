@@ -475,7 +475,7 @@ class ProofStandard(object):
             self.config[prop] = standard
 
 
-    def assign_standard(self, proposition):
+    def get_proofstandard(self, proposition):
         """
         Determine the proof standard associated with a proposition.
         
@@ -596,7 +596,7 @@ class CAES(object):
         :rtype: bool
         """
 
-        standard = self.standard.assign_standard(proposition)
+        standard = self.standard.get_proofstandard(proposition)
         logging.debug("Checking whether proposition '{}' meets proof standard '{}'.".format(proposition, standard))
         return self.meets_proof_standard(proposition, standard)
 
