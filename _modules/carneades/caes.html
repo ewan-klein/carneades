@@ -611,6 +611,17 @@
 
 </div>
 <div class="viewcode-block" id="ArgumentSet.write_to_graphviz"><a class="viewcode-back" href="../../api/index.html#carneades.caes.ArgumentSet.write_to_graphviz">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_graphviz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the graph to a file using the `Graphviz &lt;http://www.graphviz.org&gt;`_ dot language. </span>
+<span class="sd">        </span>
+<span class="sd">        A dot file can be converted to multiple `output formats</span>
+<span class="sd">        &lt;http://www.graphviz.org/content/output-formats&gt;`_, including ``png``</span>
+<span class="sd">        and ``pdf``. For example, ``dot -Tpng graph.dot &gt; graph.png`` will produce an</span>
+<span class="sd">        output file ``graph.png``.</span>
+<span class="sd">        </span>
+<span class="sd">        :parameter fname: Name of file to write the results to. If no filename is supplied,\</span>
+<span class="sd">        the results will be written to ``graph.dot``. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span>
         <span class="n">result</span> <span class="o">=</span> <span class="s">&quot;digraph G{ </span><span class="se">\n</span><span class="s">&quot;</span>
 
@@ -635,9 +646,7 @@
                 <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">source</span><span class="p">][</span><span class="s">&#39;prop&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">source</span><span class="p">][</span><span class="s">&#39;arg&#39;</span><span class="p">]</span>
             <span class="n">target_label</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">target</span><span class="p">][</span><span class="s">&#39;prop&#39;</span><span class="p">]</span> <span class="k">if</span>\
                 <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">target</span><span class="p">][</span><span class="s">&#39;prop&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="n">g</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">target</span><span class="p">][</span><span class="s">&#39;arg&#39;</span><span class="p">]</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="s">&#39;&quot;{}&quot; -&gt; &quot;{}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_label</span><span class="p">,</span> <span class="n">target_label</span><span class="p">)</span>
-            <span class="n">dot_str</span> <span class="o">=</span> <span class="s">&quot; ; </span><span class="se">\n</span><span class="s">&quot;</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="n">dot_str</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="s">&#39;&quot;{}&quot; -&gt; &quot;{}&quot;; </span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">source_label</span><span class="p">,</span> <span class="n">target_label</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">+=</span> <span class="s">&quot;}&quot;</span>
 
