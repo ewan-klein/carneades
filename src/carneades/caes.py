@@ -288,12 +288,13 @@ class ArgumentSet(object):
     the components of an argument. A vertex corresponding to the conclusion
     of an argument *A* will **depend on** the premises and exceptions in *A*.
 
-    The graph is built using the `igraph <http://igraph.org/>_` library. This
+    The graph is built using the `igraph <http://igraph.org/>`_ library. This
     allows *attributes* to be associated with both vertices and edges.
     Attributes are represented as Python dictionaries where the key (which
     must be a string) is the name of the attribute and the value is the
-    attribute itself. For more details, see
-    <http://igraph.org/python/doc/tutorial/tutorial.html#setting-and-retrieving-attributes>
+    attribute itself. For more details, see the
+    `igraph tutorial\
+    <http://igraph.org/python/doc/tutorial/tutorial.html#setting-and-retrieving-attributes>`_.
     """
     def __init__(self):
         self.graph = Graph()
@@ -389,7 +390,7 @@ class ArgumentSet(object):
         :return: A list of the arguments pro the proposition
         :rtype: list(:class:`Argument`)
 
-        :raises ValueError: if the input :class:`PropLiteral` isn't present
+        :raises ValueError: if the input :class:`PropLiteral` isn't present\
         in the graph.
         """
         g = self.graph
@@ -409,7 +410,8 @@ class ArgumentSet(object):
             args = [arg for arg in self.arguments if arg.arg_id in arg_IDs]
             return args
         except IndexError:
-            raise ValueError("Proposition '{}' is not in the current graph".format(proposition))
+            raise ValueError("Proposition '{}' is not in the current graph".\
+                             format(proposition))
 
 
 
@@ -446,9 +448,11 @@ class ArgumentSet(object):
         layout = g.layout_reingold_tilford(mode=ALL, root=roots)
 
         plot_style = {}
-        plot_style['vertex_color'] = ['lightblue' if x is None else 'pink' for x in g.vs['arg']]
+        plot_style['vertex_color'] = \
+            ['lightblue' if x is None else 'pink' for x in g.vs['arg']]
         plot_style['vertex_size'] = 60
-        plot_style['vertex_shape'] = ['circle' if x is None else 'rect' for x in g.vs['arg']]
+        plot_style['vertex_shape'] = \
+            ['circle' if x is None else 'rect' for x in g.vs['arg']]
         plot_style['margin'] = 40
         plot_style['layout'] = layout
         plot(g, **plot_style)
@@ -464,12 +468,15 @@ class ArgumentSet(object):
             prop_label = vertex.attributes()['prop']
 
             if arg_label:
-                dot_str = (arg_label + ' [color="black", fillcolor="pink", width=.75, '
-                'shape=box, style="filled"]; \n')
+                dot_str = (arg_label +
+                           ' [color="black", fillcolor="pink", width=.75, '
+                           'shape=box, style="filled"]; \n')
 
             elif prop_label:
-                dot_str = ('"{}"'.format(prop_label) + ' [color="black", fillcolor="lightblue", '
-                'fixedsize=true, width=1  shape="circle", style="filled"]; \n')
+                dot_str = ('"{}"'.format(prop_label) +
+                           ' [color="black", fillcolor="lightblue", '
+                           'fixedsize=true, width=1  shape="circle", '
+                           'style="filled"]; \n')
             result += dot_str
 
         for edge in g.es:
@@ -500,15 +507,18 @@ class ProofStandard(object):
     >>> ps = ProofStandard([(intent, "beyond_reasonable_doubt")])
 
     Possible values for proof standards: `"scintilla"`, `"preponderance"`,
-    `"clear_and_convincing"`, `"beyond_reasonable_doubt"`, and `"dialectical_validity"`.
+    `"clear_and_convincing"`, `"beyond_reasonable_doubt"`, and
+    `"dialectical_validity"`.
     """
     def __init__(self, propstandards, default='scintilla'):
         """
-        :param propstandards: the proof standard associated with each proposition under consideration.
+        :param propstandards: the proof standard associated with\
+        each proposition under consideration.
         :type propstandards: list(tuple(:class:`PropLiteral`, str))
         """
         self.proof_standards = ["scintilla", "preponderance",
-                                "clear_and_convincing", "beyond_reasonable_doubt",
+                                "clear_and_convincing",
+                                "beyond_reasonable_doubt",
                                 "dialectical_validity"]
         self.default = default
         self.config = defaultdict(lambda: self.default)
@@ -517,7 +527,8 @@ class ProofStandard(object):
     def _set_standard(self, propstandards):
         for (prop, standard) in propstandards:
             if standard not in self.proof_standards:
-                raise ValueError("{} is not a valid proof standard".format(standard))
+                raise ValueError("{} is not a valid proof standard".\
+                                 format(standard))
             self.config[prop] = standard
 
 
@@ -562,8 +573,9 @@ class CAES(object):
         :parameter proofstandard: the proof standards used in the CAES
         :type proofstandard: :class:`ProofStandard`
 
-        :parameter alpha: threshold of strength of argument required for a proposition\
-        to reach the proof standards "clear and convincing" and "beyond reasonable doubt".
+        :parameter alpha: threshold of strength of argument required for a\
+        proposition to reach the proof standards "clear and convincing" and\
+        "beyond reasonable doubt".
 
         :type alpha: float in interval [0, 1]
 
@@ -574,8 +586,9 @@ class CAES(object):
 
         :type beta: float in interval [0, 1]
 
-        :parameter gamma: threshold of strength of a *con* argument required for a proposition\
-        to reach the proof standard "beyond reasonable doubt".
+        :parameter gamma: threshold of strength of a *con* argument required\
+        for a proposition to reach the proof standard "beyond reasonable\
+        doubt".
 
         :type gamma: float in interval [0, 1]
         """
@@ -598,20 +611,28 @@ class CAES(object):
     @TraceCalls()
     def applicable(self, argument):
         """
-        An argument is *applicable* in a CAES if it needs to be taken into account when evaluating the CAES.
+        An argument is *applicable* in a CAES if it needs to be taken into
+        account when evaluating the CAES.
 
-        :parameter argument: The argument whose applicablility is being determined.
+        :parameter argument: The argument whose applicablility is being\
+        determined.
+
         :type argument: :class:`Argument`
         :rtype: bool
         """
-        _acceptable = lambda p: self.acceptable(p)        
+        _acceptable = lambda p: self.acceptable(p)
         return self._applicable(argument, _acceptable)
 
     def _applicable(self, argument, _acceptable):
-        """       
-        :parameter argument: The argument whose applicablility is being determined.
+        """
+        :parameter argument: The argument whose applicablility is being
+        determined.
+
         :type argument: :class:`Argument`
-        :parameter _acceptable: The function which determines the acceptability of a proposition in the CAES.
+
+        :parameter _acceptable: The function which determines the
+        acceptability of a proposition in the CAES.
+
         :type _acceptable: LambdaType
         :rtype: bool
         """
@@ -619,12 +640,14 @@ class CAES(object):
         logging.debug('Current assumptions: {}'.format(self.assumptions))
         logging.debug('Current premises: {}'.format(argument.premises))
         b1 = all(p in self.assumptions or \
-                 (p.negate() not in self.assumptions and _acceptable(p)) for p in argument.premises)
+                 (p.negate() not in self.assumptions and \
+                  _acceptable(p)) for p in argument.premises)
 
         if argument.exceptions:
             logging.debug('Current exception: {}'.format(argument.exceptions))
         b2 = all(e not in self.assumptions and \
-                 (e.negate() in self.assumptions or not _acceptable(e)) for e in argument.exceptions)
+                 (e.negate() in self.assumptions or \
+                  not _acceptable(e)) for e in argument.exceptions)
 
         return b1 and b2
 
@@ -634,26 +657,33 @@ class CAES(object):
         """
         A conclusion is *acceptable* in a CAES if it can be arrived at under
         the relevant proof standards, given the beliefs of the audience.
-        
-        :param proposition: The conclusion whose acceptability is to be determined.
+
+        :param proposition: The conclusion whose acceptability is to be\
+        determined.
+
         :type proposition: :class:`PropLiteral`
-        
+
         :rtype: bool
         """
 
         standard = self.standard.get_proofstandard(proposition)
-        logging.debug("Checking whether proposition '{}' meets proof standard '{}'.".format(proposition, standard))
+        logging.debug("Checking whether proposition '{}'"
+                      "meets proof standard '{}'.".\
+                      format(proposition, standard))
         return self.meets_proof_standard(proposition, standard)
 
     @TraceCalls()
     def meets_proof_standard(self, proposition, standard):
         """
         Determine whether a proposition meets a given proof standard.
-        
-        :param proposition: The proposition which should meet the relevant proof standard.
+
+        :param proposition: The proposition which should meet the relevant\
+        proof standard.
+
         :type proposition: :class:`PropLiteral`
 
-        :parameter standard: a specific level of proof; see :class:`ProofStandard` for admissible values
+        :parameter standard: a specific level of proof;\
+        see :class:`ProofStandard` for admissible values
 
         :type standard: str
         :rtype: bool
@@ -664,9 +694,10 @@ class CAES(object):
         result = False
 
         if standard == 'scintilla':
-            result = any(arg for arg in arguments if self.applicable(arg))            
+            result = any(arg for arg in arguments if self.applicable(arg))
         elif standard == 'preponderance':
-            result = self.max_weight_pro(proposition) > self.max_weight_con(proposition)
+            result = self.max_weight_pro(proposition) > \
+                self.max_weight_con(proposition)
         elif standard == 'clear_and_convincing':
             mwp = self.max_weight_pro(proposition)
             mwc = self.max_weight_con(proposition)
@@ -674,15 +705,18 @@ class CAES(object):
             diff_exceeds_gamma = (mwp - mwc) > self.gamma
             logging.debug("max weight pro '{}' is {}".format(proposition, mwp))
             logging.debug("max weight con '{}' is {}".format(proposition, mwc))
-            logging.debug("max weight pro '{}' >  alpha '{}': {}".format(mwp, self.alpha, exceeds_alpha))
-            logging.debug("diff between pro and con = {} > gamma: {}".format(mwp-mwc, diff_exceeds_gamma))
+            logging.debug("max weight pro '{}' >  alpha '{}': {}".\
+                          format(mwp, self.alpha, exceeds_alpha))
+            logging.debug("diff between pro and con = {} > gamma: {}".\
+                          format(mwp-mwc, diff_exceeds_gamma))
 
             result = (mwp > self.alpha) and (mwp - mwc > self.gamma)
         elif standard == 'beyond_reasonable_doubt':
-            result = self.meets_proof_standard(proposition, 'clear_and_convincing')\
-                and self.max_weight_con(proposition) < self.gamma
+            result = self.meets_proof_standard(proposition,
+                                               'clear_and_convincing') \
+                and \
+                self.max_weight_con(proposition) < self.gamma
 
-        #logging.debug("Proposition '{}' meets standard '{}': {}".format(proposition, standard, result))
         return result
 
     def weight_of(self, argument):
@@ -696,9 +730,10 @@ class CAES(object):
         """
         arg_id = argument.arg_id
         try:
-            return self.weight[arg_id] 
+            return self.weight[arg_id]
         except KeyError:
-            raise ValueError("No weight assigned to argument '{}'.".format(arg_id))
+            raise ValueError("No weight assigned to argument '{}'.".\
+                             format(arg_id))
 
 
     def max_weight_applicable(self, arguments):
@@ -719,7 +754,8 @@ class CAES(object):
             return 0.0
 
         applic_arg_ids = [arg.arg_id for arg in applicable_args]
-        logging.debug('Checking applicability and weights of {}'.format(applic_arg_ids))
+        logging.debug('Checking applicability and weights of {}'.\
+                      format(applic_arg_ids))
         weights = [self.weight_of(argument) for argument in applicable_args]
         logging.debug('Weights of {} are {}'.format(applic_arg_ids, weights))
         return max(weights)
@@ -728,7 +764,9 @@ class CAES(object):
         """
         The maximum of the weights pro the proposition.
 
-        :param proposition: The conclusion whose acceptability is to be determined.
+        :param proposition: The conclusion whose acceptability is to be\
+        determined.
+
         :type proposition: :class:`PropLiteral`
         :rtype: float in interval [0, 1]
         """
@@ -739,7 +777,9 @@ class CAES(object):
         """
         The maximum of the weights con the proposition.
 
-        :param proposition: The conclusion whose acceptability is to be determined.
+        :param proposition: The conclusion whose acceptability is to be\
+        determined.
+
         :type proposition: :class:`PropLiteral`
         :rtype: float in interval [0, 1]
         """

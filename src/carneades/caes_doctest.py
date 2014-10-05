@@ -142,7 +142,9 @@ True
 """
 
 if __name__ == '__main__':
-    from caes import *
-    from tracecalls import TraceCalls
+    import os, sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))    
+    from carneades.caes import *
+    from carneades.tracecalls import TraceCalls
     import doctest
     doctest.testmod(optionflags=doctest.NORMALIZE_WHITESPACE)
