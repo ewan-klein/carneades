@@ -1,12 +1,21 @@
 # Carneades sample code
 
-This is a pedagogically-oriented attempt to implement aspects of the [Carneades Argument Evaluation framework](http://carneades.github.io/carneades/Carneades/).  It closely follows the Haskell implementation in the [CarneadesDSL package](https://hackage.haskell.org/package/CarneadesDSL).
+This is a pedagogically-oriented attempt to implement aspects of the
+[Carneades Argument Evaluation
+framework](http://carneades.github.io/carneades/Carneades/). It
+closely follows the Haskell implementation in the [CarneadesDSL
+package](https://hackage.haskell.org/package/CarneadesDSL).
 
-The libraries needed to run this code on DICE are already available (except that the plotting functionality is currently not supported). Just remember that you need to explicitly call ``python3.4`` since the ``python`` command  on DICE defaults to ``python2.7``. So if you are happy to work on DICE, you are ready to go. :smile:
+The libraries needed to run this code on DICE are already available
+(except that the plotting functionality is currently not supported).
+Just remember that you need to explicitly call ``python3.4`` since the
+``python`` command on DICE defaults to ``python2.7``. So if you are
+happy to work on DICE, you are ready to go. :smile:
 
 
 
-If you want to install the necessary libraries on your own machine, however, read on.
+If you want to install the necessary libraries on your own machine,
+however, read on.
 
 ## Installing the libraries for the Carneades sample code on your own computer
 
@@ -47,10 +56,12 @@ $ pip install sphinxjp.themes.basicstrap
 $ pip install python-igraph
 ```
 
-This should also install the C bindings. If that doesn't happen because of some error, it's likely to be one of the 
-following problems:
+This should also install the C bindings. If that doesn't happen
+because of some error, it's likely to be one of the following
+problems:
 
-* The header files for the python distribution are not installed. Look up `python-dev` or `python3.4-dev`
+* The header files for the python distribution are not installed. Look
+  up `python-dev` or `python3.4-dev`
 
 * You need to compile the C code from source: download it
 [here](http://igraph.org/) and follow the instructions. In general you
