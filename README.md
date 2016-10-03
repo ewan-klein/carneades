@@ -61,13 +61,26 @@ because of some error, it's likely to be one of the following
 problems:
 
 * The header files for the python distribution are not installed. Look
-  up `python-dev` or `python3.4-dev`
-
-* You need to compile the C code from source: download it
-[here](http://igraph.org/) and follow the instructions. In general you
-should only need to follow the standard procedure:
+  up `build-essential`, and `python-dev` or `python3.4-dev`
 
 ```bash
+# in a new terminal:
+$ sudo apt-get install python-dev python3.4-dev
+$ sudo apt-get install build-essential
+```
+
+* You need to compile the C code from source: download it
+[here](http://igraph.org/c) and follow the instructions. In general you
+should only need to follow the standard procedure:
+
+``` bash
+$ sudo apt-get install libxml2-dev
+# dwnload the c binary and extract.
+$ wget http://igraph.org/nightly/get/c/igraph-0.7.1.tar.gz
+$ tar xvf igraph-0.7.1.tar.gz
+$ cd igraph-0.7.1
+
+# Installation of c binary
 $ ./configure
 $ make
 $ make install
@@ -75,19 +88,26 @@ $ make install
 
 #### Install pycairo
 
-On Ubuntu, check this [package](http://packages.ubuntu.com/search?keywords=python-cairo).
+On Ubuntu, check this [package](http://packages.ubuntu.com/search?keywords=python-cairo).<br>
+_By default this will install the package into `python` (which may not be `python3.4`)_ <br>
+_(TODO: will this still work??))_
 
 If you are using a virtualenv or you don't use Ubuntu, do the following:
 
-* Download and extract the pycairo package in the virtualenv
+* Download and extract the `pycairo` package _in_ the virtualenv
 
 ```bash
 $ curl http://cairographics.org/releases/pycairo-1.10.0.tar.bz2 -O
 $ tar xvf pycairo-1.10.0.tar.bz2
+# That doesnt quite work for me, but these do:
+# wget https://www.cairographics.org/releases/pycairo-1.10.0.tar.bz2
+# bunzip2 pycairo-1.10.0.tar.bz2
+# tar xvf pycairo-1.10.0.tar
 $ cd pycairo-1.10.0/
+$ ./waf configure # will fail, but need to generate the hidden .waf folder first for below
 ```
 
-* edit a file in the hidden .waf folder that the extraction has created (e.g. `./.waf-1.6.4-e3c1e08604b18a10567cfcd2d02eb6e6`. To do this, go into the folder and edit `./.waf-1.6.4-somenumbers/waflib/Tools/python.py` to call the python3.4-config directly.
+* edit a file in the hidden .waf folder that the extraction has created (e.g. `./.waf-1.6.4-e3c1e08604b18a10567cfcd2d02eb6e6`. To do this, go into the folder and edit `./.waf-1.6.4-somenumbers/waflib/Tools/python.py` and replace the following line (see -/+ in codeblock below) to call the python3.4-config directly.
 ```diff
     --- waflib/Tools/python.py.old  2014-08-01 14:36:23.750613874 +0000
     +++ waflib/Tools/python.py      2014-08-01 14:36:38.359627761 +0000
@@ -127,7 +147,7 @@ $ make html
 #### Test the software
 
 ```bash
-$ cd ../src # relative root is carneades/
+$ cd ../src/carneades # relative root is carneades/
 $ python -i caes.py
 ```
 
