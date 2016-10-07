@@ -69,21 +69,20 @@ $ sudo apt-get install python-dev python3.4-dev
 $ sudo apt-get install build-essential
 ```
 
-* You need to compile the C code from source: download it
-[here](http://igraph.org/c) and follow the instructions. In general you
-should only need to follow the standard procedure:
+* To install the C bindings:
 
 ``` bash
 $ sudo apt-get install libxml2-dev
-# dwnload the c binary and extract.
+# download the igraph c bindings and extract.
 $ wget http://igraph.org/nightly/get/c/igraph-0.7.1.tar.gz
 $ tar xvf igraph-0.7.1.tar.gz
 $ cd igraph-0.7.1
 
-# Installation of c binary
+# Installation
 $ ./configure
 $ make
 $ make install
+$ sudo ldconfig # this does some magic!
 ```
 
 #### Install pycairo
@@ -97,14 +96,11 @@ If you are using a virtualenv or you don't use Ubuntu, do the following:
 * Download and extract the `pycairo` package _in_ the virtualenv
 
 ```bash
-$ curl http://cairographics.org/releases/pycairo-1.10.0.tar.bz2 -O
-$ tar xvf pycairo-1.10.0.tar.bz2
-# That doesnt quite work for me, but these do:
-# wget https://www.cairographics.org/releases/pycairo-1.10.0.tar.bz2
-# bunzip2 pycairo-1.10.0.tar.bz2
-# tar xvf pycairo-1.10.0.tar
+$ wget https://www.cairographics.org/releases/pycairo-1.10.0.tar.bz2
+$ bunzip2 pycairo-1.10.0.tar.bz2
+$ tar xvf pycairo-1.10.0.tar
 $ cd pycairo-1.10.0/
-$ ./waf configure # will fail, but need to generate the hidden .waf folder first for below
+$ ./waf configure # This will fail, but need to generate the hidden .waf folder first for below
 ```
 
 * edit a file in the hidden .waf folder that the extraction has created (e.g. `./.waf-1.6.4-e3c1e08604b18a10567cfcd2d02eb6e6`. To do this, go into the folder and edit `./.waf-1.6.4-somenumbers/waflib/Tools/python.py` and replace the following line (see -/+ in codeblock below) to call the python3.4-config directly.
@@ -129,6 +125,38 @@ $ ./waf configure --prefix=$VIRTUAL_ENV
 $ ./waf build
 $ ./waf install
 ```
+* If you run into 'cairo >= 1.10.0' error, you will need to install `cairo` and `pixman`:
+
+
+Download and Install `pixman`
+```bash
+# Open a new terminal and run these commands:
+$ wget https://www.cairographics.org/releases/pixman-0.34.0.tar.gz
+$ tar xvf pixman-0.34.0.tar.gz
+$ cd pixman-0.34.0
+
+# configure make install:
+$ ./configure
+$ make
+$ make install
+```
+
+Download and Install `cairo`
+```bash
+# continuing from above:
+$ cd ..
+$ wget https://www.cairographics.org/releases/cairo-1.14.6.tar.xz
+$ tar xvf cairo-1.14.6.tar.xz
+$ cd cairo-1.14.6
+
+# configure make install:
+$ ./configure
+$ make
+$ make install
+```
+
+You should now have both `cairo` and `pixman` installed in your machine. Return to installation for pycairo[link](#install-pycairo).
+
 
 ### Clone repository
 
